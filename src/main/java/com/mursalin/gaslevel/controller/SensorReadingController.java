@@ -38,6 +38,8 @@ public class SensorReadingController {
 //        }
 //    }
 
+    int reading;
+
     @GetMapping("/data")
     public ResponseEntity<String> checkBackendStatus() {
         return ResponseEntity.ok("Backend is up and running!");
@@ -46,7 +48,17 @@ public class SensorReadingController {
     @PostMapping("/data")
     public ResponseEntity<String> receiveSensorData(@RequestParam int sensorValue) {
         System.out.println("Received sensor data: " + sensorValue);
-        // Process the data as needed (e.g., store in database)
+        reading = sensorValue;
         return ResponseEntity.ok("Data received successfully");
+    }
+
+    @GetMapping("/latest")
+    public ResponseEntity<Integer> getLatestSensorReading() {
+        int latestReading = reading;
+        if (latestReading != 0) {
+            return ResponseEntity.ok(latestReading);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
     }
 }
