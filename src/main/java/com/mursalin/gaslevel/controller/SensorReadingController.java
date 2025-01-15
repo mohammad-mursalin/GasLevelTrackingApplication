@@ -5,8 +5,11 @@ package com.mursalin.gaslevel.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/sensor-readings")
+@CrossOrigin(value = "http://localhost:5173")
 public class SensorReadingController {
 
 //    private final SensorReadingService sensorReadingService;
@@ -45,20 +48,33 @@ public class SensorReadingController {
         return ResponseEntity.ok("Backend is up and running!");
     }
 
+//    @PostMapping("/data")
+//    public ResponseEntity<String> receiveSensorData(@RequestParam int sensorValue) {
+//        System.out.println("Received sensor data: " + sensorValue);
+//        reading = sensorValue;
+//        return ResponseEntity.ok("Data received successfully");
+//    }
+
+    double sensorValue;
+
     @PostMapping("/data")
-    public ResponseEntity<String> receiveSensorData(@RequestParam int sensorValue) {
-        System.out.println("Received sensor data: " + sensorValue);
-        reading = sensorValue;
-        return ResponseEntity.ok("Data received successfully");
+    public ResponseEntity<?> receiveSensorDataNew(@RequestBody Map<String, Object> payload) {
+        sensorValue = (Double) payload.get("sensorValue");
+        System.out.println("Received Gas Concentration: " + sensorValue + " ppm");
+
+        return ResponseEntity.ok("Data received");
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<Integer> getLatestSensorReading() {
-        int latestReading = reading;
+    public ResponseEntity<Double> getLatestSensorReading() {
+        double latestReading = sensorValue;
+
         if (latestReading != 0) {
             return ResponseEntity.ok(latestReading);
         } else {
             return ResponseEntity.noContent().build();
         }
     }
+
+
 }
