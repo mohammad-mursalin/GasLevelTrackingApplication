@@ -23,4 +23,15 @@ public class SensorReading {
     private double gasLevel;
 
     private LocalDateTime timestamp;
+
+    public SensorReading(String location, double gasLevel) {
+        this.gasLevel = gasLevel;
+        this.location = location;
+    }
+
+    public SensorReading(String location, double gasLevel, LocalDateTime timestamp) {
+        this.location = location;
+        this.gasLevel = gasLevel;
+        this.timestamp = timestamp;
+    }
 }
