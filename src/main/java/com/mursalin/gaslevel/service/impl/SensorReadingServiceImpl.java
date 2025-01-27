@@ -15,8 +15,8 @@ import java.util.Map;
 public class SensorReadingServiceImpl implements SensorReadingService {
 
     private final SensorReadingRepository sensorReadingRepository;
-    private double sensorValue = -1;
-    private String location = "";
+    private double sensorValue = 0;
+    private String location = null;
 
     @Autowired
     public SensorReadingServiceImpl(SensorReadingRepository sensorReadingRepository) {
@@ -38,6 +38,8 @@ public class SensorReadingServiceImpl implements SensorReadingService {
     public SensorReading saveSensorReading(SensorReading sensorReading) {
 
         sensorReading.setTimestamp(LocalDateTime.now());
+        sensorReading.setGasLevel(sensorValue);
+        System.out.println(sensorReading.getLocation());
         updateLocation(sensorReading.getLocation());
         return sensorReadingRepository.save(sensorReading);
     }
