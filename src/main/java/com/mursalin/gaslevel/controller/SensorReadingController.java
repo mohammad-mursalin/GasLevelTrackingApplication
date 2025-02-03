@@ -40,10 +40,8 @@ public class SensorReadingController {
         return ResponseEntity.ok("Data received");
     }
 
-    @PostMapping("/latest")
-    public ResponseEntity<Double> getLatestSensorReading(@RequestBody SensorReading sensorReading) {
-
-        sensorReadingService.saveSensorReading(sensorReading);
+    @GetMapping("/latest")
+    public ResponseEntity<Double> getLatestSensorReading() {
 
         double latestReading = sensorReadingService.getLatestSensorReading();
 
@@ -52,6 +50,12 @@ public class SensorReadingController {
         } else {
             return ResponseEntity.noContent().build();
         }
+    }
+
+    @PostMapping("/location")
+    public ResponseEntity<?> getLocation(@RequestBody SensorReading sensorReading) {
+        sensorReadingService.updateLocation(sensorReading.getLocation());
+        return null;
     }
 
 }

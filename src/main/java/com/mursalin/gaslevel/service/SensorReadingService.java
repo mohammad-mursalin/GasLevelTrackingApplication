@@ -7,11 +7,13 @@ import java.util.Map;
 
 public interface SensorReadingService {
 
-    SensorReading saveSensorReading(SensorReading sensorReading);
+    SensorReading saveSensorReading();
 
     List<SensorReading> getAllSensorReadings();
 
     double getLatestSensorReading();
 
     void receivedSensorData(Map<String, Object> payload);
+
+    void updateLocation(String location);
 }

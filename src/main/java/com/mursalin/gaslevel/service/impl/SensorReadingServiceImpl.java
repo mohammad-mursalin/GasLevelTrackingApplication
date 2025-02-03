@@ -35,8 +35,9 @@ public class SensorReadingServiceImpl implements SensorReadingService {
     }
 
     @Override
-    public SensorReading saveSensorReading(SensorReading sensorReading) {
-
+    public SensorReading saveSensorReading() {
+        SensorReading sensorReading = new SensorReading();
+        sensorReading.setLocation(location);
         sensorReading.setTimestamp(LocalDateTime.now());
         sensorReading.setGasLevel(sensorValue);
         System.out.println(sensorReading.getLocation());
@@ -60,7 +61,7 @@ public class SensorReadingServiceImpl implements SensorReadingService {
 
 
 
-    private void updateLocation(String location) {
+    public void updateLocation(String location) {
         this.location = location;
     }
 }
