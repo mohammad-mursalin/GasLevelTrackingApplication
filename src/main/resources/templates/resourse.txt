@@ -1,48 +1,101 @@
-Problem 1: Bubble Sort Algorithm
+Lab Report on Signal Operations in Signal Processing
+Theory
+
+Signal processing involves manipulating signals to extract information, enhance features, or analyze behavior. Basic operations like addition, multiplication, scaling, and shifting are fundamental in understanding signal behavior in both time and frequency domains.
 
-Illustration:
-Bubble sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order. The pass through the list is repeated until the list is sorted.
+1. Signal Addition: Combining two or more signals, often used in overlaying or superimposing information.
 
-Algorithm:
-    1. Start from the first element, compare it with the next element.
-    2. If the current element is greater than the next element, swap them.
-    3. Move to the next pair of elements and repeat the process.
-    4. Continue this process until no more swaps are needed.
+   y(t) = x1(t) + x2(t)
+2. Signal Multiplication: Multiplying two signals results in a combined signal with modulated characteristics, often used in amplitude modulation.
 
-Source Code:
-public class BubbleSort {
-    public static void bubbleSort(int[] arr) {
-        int n = arr.length;
-        for (int i = 0; i < n-1; i++)
-            for (int j = 0; j < n-i-1; j++)
-                if (arr[j] > arr[j+1]) {
-                    int temp = arr[j];
-                    arr[j] = arr[j+1];
-                    arr[j+1] = temp;
-                }
-    }
+   y(t) = x1(t) * x2(t)
+3. Scaling: Modifying the amplitude or duration of a signal.
+ - Amplitude Scaling: Changes the signal's magnitude by a constant.
+ - Time Scaling: Compresses or expands the signal along the time axis.
 
-    public static void main(String[] args) {
-        int[] arr = {64, 34, 25, 12, 22, 11, 90};
-        bubbleSort(arr);
-        System.out.println("Sorted array:");
-        for (int i : arr) {
-            System.out.print(i + " ");
-        }
-    }
-}
+     y(t) = k * x(at)
+4. Shifting: In this operation, each sample of x(n) is shifted by an amount k to obtain a shifted sequence y(n).
 
-Sample Input and Output:
-    • Input: {64, 34, 25, 12, 22, 11, 90}
-    • Output: Sorted array: 11 12 22 25 34 64 90
+ y(n)={x(n−k)}
 
+ If we let m = n−k, then n = m+k and the above operation is given by
 
+y(m+k) = {x(m)}
 
+These operations help in signal transformation, modulation, and system analysis.
+5. Folding: In this operation each sample of x(n)is flipped around n =0 to obtain a folded sequence y(n).
 
+ y(n)={x(−n)}
 
 
+Source Code
 
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Parameters
+t = np.arange(-10, 10, 0.01)  # Time vector
+# Define two signals
+x1 = np.sin(2 * np.pi * 1 * t)  # Signal 1: Sine wave
+x2 = np.cos(2 * np.pi * 0.5 * t)  # Signal 2: Cosine wave
+# Signal Addition
+y_add = x1 + x2
+# Signal Multiplication
+y_mult = x1 * x2
+# Amplitude Scaling
+k = 2  # Scaling factor
+y_scaled = k * x1
+# Time Shifting
+shift = 2  # Shift value (in seconds)
+y_shifted = np.sin(2 * np.pi * 1 * (t - shift))  # Delayed signal
+# Signal Folding
+y_folded = np.sin(2 * np.pi * 1 * (-t))  # Folded sine wave
+# Plot Results
+plt.figure(figsize=(12, 15))
+# Original Signals
+plt.subplot(6, 1, 1)
+plt.plot(t, x1, label='x1: Sine Wave', color='b')
+plt.plot(t, x2, label='x2: Cosine Wave', color='r')
+plt.title('Original Signals')
+plt.legend()
+plt.grid()
+# Signal Addition
+plt.subplot(6, 1, 2)
+plt.plot(t, y_add, color='m')
+plt.title('Signal Addition')
+plt.grid()
+# Signal Multiplication
+plt.subplot(6, 1, 3)
+plt.plot(t, y_mult, color='k')
+plt.title('Signal Multiplication')
+plt.grid()
+# Amplitude Scaling
+plt.subplot(6, 1, 4)
+plt.plot(t, y_scaled, color='g')
+plt.title('Amplitude Scaling')
+plt.grid()
+# Time Shifting
+plt.subplot(6, 1, 5)
+plt.plot(t, y_shifted, color='c')
+plt.title('Time Shifting')
+plt.grid()
+# Signal Folding
+plt.subplot(6, 1, 6)
+plt.plot(t, y_folded, label='Folded Signal', color='purple')
+plt.title('Signal Folding')
+plt.legend()
+plt.grid()
+
+# Display the plots
+plt.tight_layout()
+plt.show()
+Output
+
+
+
+
+
+
 
 
 
@@ -50,491 +103,529 @@ Sample Input and Output:
 
 
 
+Lab Report on Signal Sequence
+1. Theory
+Signal sequences are fundamental building blocks in signal processing and system analysis. They are used to represent basic signals that can be combined or manipulated to model more complex systems. In this lab, we focus on three key signal sequences:
+    1. Impulse Signal:
+        ◦ The impulse signal, also known as the Dirac delta function, is a theoretical signal that is zero everywhere except at t=0, where it is infinitely high. In practice, it is approximated as a narrow pulse with unit area.
+        ◦ Mathematically, the impulse signal is defined as:
 
+          δ(t)={∞ if t=0
+                     0 otherwise
 
 
+        ◦ The impulse signal is used to analyze the response of systems (impulse response) and is a key concept in convolution and filtering.
+    2. Step Signal:
+        ◦ The step signal, also known as the unit step function, represents a signal that transitions from 0 to 1 at t=0.
+        ◦ Mathematically, the step signal is defined as:
 
+          u(t)={1 if t≥0
+                     0 otherwise
 
+        ◦ The step signal is used to model systems that switch on at a specific time, such as turning on a device or applying a constant input.
+    3. Ramp Signal:
+        ◦ The ramp signal represents a signal that increases linearly with time for t≥0.
+        ◦ Mathematically, the ramp signal is defined as:
 
+          r(t)={t if t≥0
+                     0 otherwise
 
+        ◦ The ramp signal is used to model systems with linearly increasing inputs, such as velocity or acceleration.
+3. Source Code
+import numpy as np
+import matplotlib.pyplot as plt
 
+# Define the range for continuous-time signals
+t = np.linspace(-10, 10, 1000)  # Smooth time values
 
+# Define continuous-time signals
+def impulse_signal(t):
+    return np.where(np.abs(t) < 0.1, 1, 0)  # Approximate impulse with a narrow pulse
 
+def step_signal(t):
+    return np.where(t >= 0, 1, 0)
 
+def ramp_signal(t):
+    return np.where(t >= 0, t, 0)
 
-Problem 2: Linear Search Algorithm
+# Generate signals
+impulse = impulse_signal(t)
+step = step_signal(t)
+ramp = ramp_signal(t)
 
-Illustration:
-Linear search is a method for finding a particular value in a list. It checks each element of the list one by one from the start until the desired element is found. This algorithm is straightforward but can be inefficient for large lists.
+# Plot signals
+plt.figure(figsize=(12, 4))
 
-Algorithm:
-    1. Start from the first element of the array.
-    2. Compare the current element with the target value.
-    3. If the current element matches the target value, return the index.
-    4. If the end of the array is reached without finding the target, return -1.
+# Impulse Signal
+plt.subplot(1, 3, 1)
+plt.plot(t, impulse, 'r', linewidth=2)
+plt.title("Impulse Signal (Approximate)")
+plt.xlabel("t")
+plt.ylabel("Amplitude")
+plt.grid()
 
-Source Code:
-public class LinearSearch {
-    public static int linearSearch(int[] arr, int target) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == target) {
-                return i;
-            }
-        }
-        return -1;
-    }
+# Step Signal
+plt.subplot(1, 3, 2)
+plt.plot(t, step, 'g', linewidth=2)
+plt.title("Step Signal")
+plt.xlabel("t")
+plt.ylabel("Amplitude")
+plt.grid()
 
-    public static void main(String[] args) {
-        int[] arr = {10, 20, 30, 40, 50};
-        int target = 30;
-        int result = linearSearch(arr, target);
-        if (result == -1) {
-            System.out.println("Element not found");
-        } else {
-            System.out.println("Element found at index: " + result);
-        }
-    }
-}
+# Ramp Signal
+plt.subplot(1, 3, 3)
+plt.plot(t, ramp, 'b', linewidth=2)
+plt.title("Ramp Signal")
+plt.xlabel("t")
+plt.ylabel("Amplitude")
+plt.grid()
 
-Sample Input and Output:
-    • Input: {10, 20, 30, 40, 50}, Target: 30
-    • Output: Element found at index: 2
-
-Problem 3: Merge Sort Algorithm
-Illustration:
-Merge sort is a divide-and-conquer algorithm that divides the input array into two halves, recursively sorts them, and then merges the two sorted halves. This algorithm is efficient and has a time complexity of O(n log n).
-
-Algorithm:
-    1. Divide the array into two halves.
-    2. Recursively sort each half.
-    3. Merge the two sorted halves.
-
-Source Code:
-public class MergeSort {
-    public static void mergeSort(int[] arr, int left, int right) {
-        if (left < right) {
-            int mid = (left + right) / 2;
-            mergeSort(arr, left, mid);
-            mergeSort(arr, mid + 1, right);
-            merge(arr, left, mid, right);
-        }
-    }
-
-    public static void merge(int[] arr, int left, int mid, int right) {
-        int n1 = mid - left + 1;
-        int n2 = right - mid;
-
-        int[] L = new int[n1];
-        int[] R = new int[n2];
-
-        for (int i = 0; i < n1; ++i)
-            L[i] = arr[left + i];
-        for (int j = 0; j < n2; ++j)
-            R[j] = arr[mid + 1 + j];
-
-        int i = 0, j = 0;
-        int k = left;
-        while (i < n1 && j < n2) {
-            if (L[i] <= R[j]) {
-                arr[k] = L[i];
-                i++;
-            } else {
-                arr[k] = R[j];
-                j++;
-            }
-            k++;
-        }
-
-        while (i < n1) {
-            arr[k] = L[i];
-            i++;
-            k++;
-        }
-
-        while (j < n2) {
-            arr[k] = R[j];
-            j++;
-            k++;
-        }
-    }
-
-    public static void main(String[] args) {
-        int[] arr = {38, 27, 43, 3, 9, 82, 10};
-        mergeSort(arr, 0, arr.length - 1);
-        System.out.println("Sorted array:");
-        for (int i : arr) {
-            System.out.print(i + " ");
-        }
-    }
-}
-
-Sample Input and Output:
-    • Input: {38, 27, 43, 3, 9, 82, 10}
-    • Output: Sorted array: 3 9 10 27 38 43 82
-
-Problem 4: Binary Search Algorithm
-Illustration:
-Binary search is an efficient algorithm for finding an item from a sorted list of items. It works by repeatedly dividing in half the portion of the list that could contain the item, until you've narrowed down the possible locations to just one.
-
-Algorithm:
-    1. Compare the target value to the middle element of the array.
-    2. If the target value is equal to the middle element, return the index.
-    3. If the target value is less than the middle element, repeat the search in the left half.
-    4. If the target value is greater than the middle element, repeat the search in the right half.
-    5. If the search ends with the remaining half being empty, the target is not in the array.
-
-Source Code:
-public class BinarySearch {
-    public static int binarySearch(int[] arr, int target) {
-        int left = 0, right = arr.length - 1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            if (arr[mid] == target) {
-                return mid;
-            }
-            if (arr[mid] < target) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
-        }
-        return -1;
-    }
-
-    public static void main(String[] args) {
-        int[] arr = {2, 3, 4, 10, 40};
-        int target = 10;
-        int result = binarySearch(arr, target);
-        if (result == -1) {
-            System.out.println("Element not found");
-        } else {
-            System.out.println("Element found at index: " + result);
-        }
-    }
-}
-
-Sample Input and Output:
-    • Input: {2, 3, 4, 10, 40}, Target: 10
-    • Output: Element found at index: 3
-
-Problem 5: Pattern Matching Algorithm
-Illustration:
-Pattern matching involves finding a substring (pattern) within a larger string (text). The algorithm checks for the presence of the pattern at each position in the text. This is a fundamental operation in text processing.
-Algorithm:
-    1. Iterate through the text.
-    2. For each position in the text, check if the pattern matches starting at that position.
-    3. If a match is found, return the starting index.
-    4. If no match is found after checking all positions, return -1.
-
-Source Code:
-public class PatternMatching {
-    public static int findPattern(String text, String pattern) {
-        int n = text.length();
-        int m = pattern.length();
-        for (int i = 0; i <= n - m; i++) {
-            int j;
-            for (j = 0; j < m; j++) {
-                if (text.charAt(i + j) != pattern.charAt(j)) {
-                    break;
-                }
-            }
-            if (j == m) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public static void main(String[] args) {
-        String text = "ABABDABACDABABCABAB";
-        String pattern = "ABABCABAB";
-        int result = findPattern(text, pattern);
-        if (result == -1) {
-            System.out.println("Pattern not found");
-        } else {
-            System.out.println("Pattern found at index: " + result);
-        }
-    }
-}
-
-Sample Input and Output:
-    • Input: Text: "ABABDABACDABABCABAB", Pattern: "ABABCABAB"
-    • Output: Pattern found at index: 10
-
-Problem 6: Queue Data Structure
-Illustration:
-A queue is a linear data structure that follows the First In First Out (FIFO) principle. Elements are added at the rear (enqueue) and removed from the front (dequeue). This structure is commonly used in scenarios like task scheduling, buffering, and breadth-first search.
-
-Algorithm:
-    1. Initialize an array to represent the queue and pointers for the front and rear.
-    2. Implement the enqueue operation to add elements at the rear.
-    3. Implement the dequeue operation to remove elements from the front.
-    4. Handle edge cases like queue overflow (full queue) and underflow (empty queue).
-
-Source Code:
-public class Queue {
-    private int[] arr;
-    private int front;
-    private int rear;
-    private int capacity;
-    private int count;
-
-    public Queue(int size) {
-        arr = new int[size];
-        capacity = size;
-        front = 0;
-        rear = -1;
-        count = 0;
-    }
-
-    public void enqueue(int item) {
-        if (isFull()) {
-            System.out.println("Queue is full");
-            return;
-        }
-        rear = (rear + 1) % capacity;
-        arr[rear] = item;
-        count++;
-    }
-
-    public int dequeue() {
-        if (isEmpty()) {
-            System.out.println("Queue is empty");
-            return -1;
-        }
-        int item = arr[front];
-        front = (front + 1) % capacity;
-        count--;
-        return item;
-    }
-
-    public boolean isFull() {
-        return count == capacity;
-    }
-
-    public boolean isEmpty() {
-        return count == 0;
-    }
-
-    public static void main(String[] args) {
-        Queue queue = new Queue(5);
-        queue.enqueue(10);
-        queue.enqueue(20);
-        queue.enqueue(30);
-        System.out.println("Dequeued: " + queue.dequeue());
-        System.out.println("Dequeued: " + queue.dequeue());
-    }
-}
-
-Sample Input and Output:
-    • Input: Enqueue 10, 20, 30
-    • Output:
-
-      Dequeued: 10
-      Dequeued: 20
-
-
-Problem 7: N-Queens Problem
-Illustration:
-The N-Queens problem involves placing N chess queens on an N×N chessboard so that no two queens threaten each other. This means no two queens can share the same row, column, or diagonal. The problem is solved using backtracking.
-
-Algorithm:
-    1. Start in the leftmost column.
-    2. If all queens are placed, return true.
-    3. Try all rows in the current column.
-    4. If the queen can be placed safely, mark this [row, column] as part of the solution.
-    5. Recursively check if placing the queen leads to a solution.
-    6. If placing the queen doesn't lead to a solution, backtrack and try the next row.
-    7. If all rows have been tried and nothing worked, return false.
-
-Source Code:
-public class NQueens {
-    private int N;
-    private int[] board; // board[row] stores the column where the queen is placed
-
-    public NQueens(int N) {
-        this.N = N;
-        board = new int[N]; // Array stores queen positions
-    }
-
-    public boolean solve(int row) {
-        if (row == N) { // All queens placed successfully
-            printBoard();
-            return true;
-        }
-
-        for (int col = 0; col < N; col++) {
-            if (isSafe(row, col)) {
-                board[row] = col; // Place queen
-                if (solve(row + 1)) { // Move to next row
-                    return true;
-                }
-                // Backtrack: If placing queen here didn't work, try next column
-            }
-        }
-        return false; // No valid position found, backtrack
-    }
-
-    private boolean isSafe(int row, int col) {
-        for (int i = 0; i < row; i++) {
-            if (board[i] == col || Math.abs(board[i] - col) == Math.abs(i - row)) {
-                return false; // Column or diagonal conflict
-            }
-        }
-        return true;
-    }
-
-    private void printBoard() {
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                System.out.print(board[i] == j ? "Q " : ". ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-    public static void main(String[] args) {
-        NQueens nQueens = new NQueens(8);
-        if (!nQueens.solve(0)) {
-            System.out.println("No solution found.");
-        }
-    }
-}
-
-Sample Input and Output:
-    • Input: N = 8
-    • Output: A valid 8-Queens solution on an 8x8 board.
-
-Problem 8: Sum of Subset Problem
-Illustration:
-The sum of subset problem involves finding a subset of a given set of integers that adds up to a specified sum. This problem is solved using backtracking.
-
-Algorithm:
-    1. Use backtracking to explore all possible subsets.
-    2. For each element, decide whether to include it in the current subset.
-    3. If including the current element does not exceed the target sum, proceed recursively.
-    4. If a subset with the target sum is found, return true.
-
-Source Code:
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class SubsetSum {
-    static boolean isSubsetSum(int[] set, int n, int sum, List<Integer> subset) {
-        // Base Case: If sum is 0, print the subset and return true
-        if (sum == 0) {
-            System.out.println("Subset found: " + subset);
-            return true;
-        }
-        // If no more elements left and sum is not 0, return false
-        if (n == 0) return false;
-
-        // If the last element is greater than sum, ignore it
-        if (set[n - 1] > sum)
-            return isSubsetSum(set, n - 1, sum, subset);
-
-        // Include the last element in the subset
-        subset.add(set[n - 1]);
-        if (isSubsetSum(set, n - 1, sum - set[n - 1], subset))
-            return true; // Stop recursion once a valid subset is found
-        subset.remove(subset.size() - 1); // Backtrack
-
-        // Exclude the last element and check
-        return isSubsetSum(set, n - 1, sum, subset);
-    }
-
-    public static void main(String[] args) {
-        int[] set = {5, 10, 12, 13, 15, 18};
-        int sum = 30;
-        List<Integer> subset = new ArrayList<>();
-
-        if (!isSubsetSum(set, set.length, sum, subset))
-            System.out.println("No subset found");
-    }
-}
-
-Sample Input and Output:
-    • Input: Set: {5, 10, 12, 13, 15, 18}, Sum: 30
-    • Output: Found a subset with given sum
-
-Problem 9: 0/1 Knapsack Problem
-Illustration:
-The 0/1 Knapsack problem involves selecting items with given weights and values to maximize the total value without exceeding the knapsack's capacity. This problem is solved using dynamic programming.
-
-Algorithm:
-    1. Use dynamic programming to build a table where each entry represents the maximum value achievable with a given weight limit.
-    2. Iterate through each item and update the table based on whether including the item increases the total value.
-
-Source Code:
-public class Knapsack {
-    public static int knapsack(int[] profits, int[] weights, int capacity) {
-        int n = profits.length;
-        int[][] dp = new int[n + 1][capacity + 1];
-
-        for (int i = 1; i <= n; i++) {
-            for (int w = 0; w <= capacity; w++) {
-                if (weights[i - 1] <= w) {
-                    dp[i][w] = Math.max(dp[i - 1][w], dp[i - 1][w - weights[i - 1]] + profits[i - 1]);
-                } else {
-                    dp[i][w] = dp[i - 1][w];
-                }
-            }
-        }
-
-        return dp[n][capacity];
-    }
-
-    public static void main(String[] args) {
-        int[] profits = {15, 25, 13, 23};
-        int[] weights = {2, 6, 12, 9};
-        int capacity = 20;
-        System.out.println("Maximum profit: " + knapsack(profits, weights, capacity));
-    }
-}
-Sample Input and Output:
-    • Input: Profits: {15, 25, 13, 23}, Weights: {2, 6, 12, 9}, Capacity: 20
-    • Output: Maximum profit: 48
-
-
-Problem 10: Tower of Hanoi Problem
-Illustration:
-The Tower of Hanoi problem involves moving a stack of disks from one peg to another, using a third peg as auxiliary, under the constraints that only one disk can be moved at a time and no disk may be placed on top of a smaller disk.
-
-Algorithm:
-    1. Move the top n-1 disks from the source peg to the auxiliary peg.
-    2. Move the nth disk from the source peg to the destination peg.
-    3. Move the n-1 disks from the auxiliary peg to the destination peg.
-
-Source Code:
-
-public class TowerOfHanoi {
-    public static void towerOfHanoi(int n, char from_rod, char to_rod, char aux_rod) {
-        if (n == 1) {
-            System.out.println("Move disk 1 from rod " + from_rod + " to rod " + to_rod);
-            return;
-        }
-        towerOfHanoi(n - 1, from_rod, aux_rod, to_rod);
-        System.out.println("Move disk " + n + " from rod " + from_rod + " to rod " + to_rod);
-        towerOfHanoi(n - 1, aux_rod, to_rod, from_rod);
-    }
-
-    public static void main(String[] args) {
-        int n = 3; // Number of disks
-        towerOfHanoi(n, 'A', 'C', 'B');
-    }
-}
-
-Sample Input and Output:
-    • Input: n = 3
-    • Output:
-      Move disk 1 from rod A to rod C
-      Move disk 2 from rod A to rod B
-      Move disk 1 from rod C to rod B
-      Move disk 3 from rod A to rod C
-      Move disk 1 from rod B to rod A
-      Move disk 2 from rod B to rod C
-      Move disk 1 from rod A to rod C
+plt.tight_layout()
+plt.show()
+
+4. Output
+After running the code, the following graphs are generated:
+    1. Impulse Signal (Approximate):
+        ◦ A sharp pulse at , approximating the Dirac delta function.
+    2. Step Signal:
+        ◦ A flat signal that remains at 0 for and jumps to 1 at .
+    3. Ramp Signal:
+        ◦ A linearly increasing signal starting from .
+Each graph represents the behavior of its respective signal in continuous time.
+
+
+
+
+Lab Report on Convolution
+Theory
+Convolution is a mathematical operation that combines two signals to produce a third signal, which represents how the shape of one signal is modified by the other. It is a fundamental concept in signal processing, used in applications such as filtering, system analysis, and image processing.
+The convolution of two continuous-time signals x(t) and h(t) is defined as:
+
+y(t)=x(t)∗h(t)=−∞∫∞​x(τ)h(t−τ)dτ
+
+For discrete-time signals, the convolution is given by:
+
+y[n]=x[n]∗h[n]=k=−∞∑∞​x[k]h[n−k]
+
+Key Points:
+    1. Linear Time-Invariant (LTI) Systems: Convolution is used to describe the output of an LTI system when the input signal and the system's impulse response are known.
+    2. Commutative Property: Convolution is commutative, meaning x(t)∗h(t)=h(t)∗x(t).
+    3. Applications: Convolution is used in filtering (e.g., low-pass, high-pass filters), audio processing, and image blurring or sharpening.
+
+By performing convolution, we can analyze how a system responds to different inputs, design filters, and understand the interaction between signals and systems.
+
+Source code
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define two real signals: sine and cosine waves
+fs = 1000 # Sampling frequency in Hz
+t = np.linspace(0, 1, fs, endpoint=False) # Time vector (1 second duration)
+
+# Define the signals
+sine_wave = np.sin(2 * np.pi * 5 * t) # 5 Hz sine wave
+cosine_wave = np.cos(2 * np.pi * 5 * t) # 5 Hz cosine wave
+
+# Perform convolution
+conv_result = np.convolve(sine_wave, cosine_wave, mode='full')
+
+# Display and plot the results
+plt.figure(figsize=(12, 6))
+
+# Original signals
+plt.subplot(3, 1, 1)
+plt.plot(t, sine_wave, label="Sine Wave")
+plt.plot(t, cosine_wave, label="Cosine Wave")
+plt.title("Original Signals")
+plt.legend()
+plt.grid()
+
+# Convolution result
+conv_time = np.linspace(-1, 1, len(conv_result), endpoint=False)
+plt.subplot(3, 1, 2)
+plt.plot(conv_time, conv_result, label="Convolution", color='orange')
+plt.title("Convolution of Sine and Cosine Waves")
+plt.xlabel("Time")
+plt.ylabel("Amplitude")
+plt.grid()
+
+plt.tight_layout()
+plt.show()
+
+
+Output
+
+
+Lab Report on Correlation
+
+Theory
+Correlation is a measure of similarity between two signals, often used to detect patterns or align signals in time. It is widely used in applications such as radar, sonar, and pattern recognition.
+The cross-correlation of two continuous-time signals x(t) and y(t) is defined as:
+Rxy​(τ)=−∞∫∞​x(t)y(t+τ)dt
+
+For discrete-time signals, the cross-correlation is given by:
+
+Rxy​[m]=n=−∞∑∞​x[n]y[n+m]
+
+Key Points:
+    1. Autocorrelation: When a signal is correlated with itself, it is called autocorrelation. It measures the similarity of a signal with a time-shifted version of itself.
+    2. Applications: Correlation is used in signal detection, time-delay estimation, and pattern matching.
+    3. Peak Detection: The peak of the correlation function indicates the time shift where the signals are most similar.
+
+By using correlation, we can determine the degree of similarity between signals, detect delays, and identify patterns in noisy environments.
+
+Source code
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define two real signals: sine waves with different frequencies
+fs = 1000 # Sampling frequency in Hz
+t = np.linspace(0, 1, fs, endpoint=False) # Time vector (1 second duration)
+
+# Define the sine waves with different frequencies
+sine_wave1 = np.sin(2 * np.pi * 5 * t) # 5 Hz sine wave
+sine_wave2 = np.sin(2 * np.pi * 5 * t + np.pi / 4) # 5 Hz sine wave with a phase shift of 45 degrees
+
+# Display and plot the results
+plt.figure(figsize=(12, 8))
+
+# Original signals
+plt.subplot(3, 1, 1)
+plt.plot(t, sine_wave1, label="Sine Wave 1 (5 Hz)")
+plt.plot(t, sine_wave2, label="Sine Wave 2 (5 Hz with 45° phase shift)")
+plt.title("Original Signals (Sine Waves with Phase Shift)")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.legend()
+plt.grid()
+
+# Perform cross-correlation
+correlation = np.correlate(sine_wave1, sine_wave2, mode='full')
+lags = np.arange(-len(sine_wave1) + 1, len(sine_wave1)) # Compute lag indices
+
+# Cross-correlation
+plt.subplot(3, 1, 2)
+plt.plot(lags, correlation, label="Cross-Correlation", color='green')
+plt.title("Cross-Correlation of Sine Waves")
+plt.xlabel("Lag")
+plt.ylabel("Correlation")
+plt.legend()
+plt.grid()
+
+# Perform auto-correlation
+auto_correlation = np.correlate(sine_wave1, sine_wave1, mode='full')
+
+# Auto-correlation
+plt.subplot(3, 1, 3)
+plt.plot(lags, auto_correlation, label="Auto-Correlation", color='orange')
+plt.title("Auto-Correlation of Sine Wave 1")
+plt.xlabel("Lag")
+plt.ylabel("Correlation")
+plt.legend()
+plt.grid()
+
+plt.tight_layout()
+plt.show()
+
+Output
+
+
+
+Feature Extraction of a PPG
+(Photoplethysmogram) Signal
+
+Photoplethysmography (PPG) is a simple and non-invasive technique used to measure changes in blood volume in the body. It works by shining light onto the skin and detecting variations in the reflected or transmitted light, which correspond to blood flow changes. PPG signals are widely used in heart rate monitoring, oxygen saturation measurement, and cardiovascular health analysis.
+Since the PPG signal contains valuable physiological information, we use feature extraction techniques to analyze it effectively. These techniques help us identify key characteristics such as heart rate, blood circulation patterns, and heart rate variability.
+
+1. Understanding the PPG Signal
+
+The PPG signal consists of repeating waveforms that represent heartbeats. Each cycle of the signal contains:
+    • A Systolic Peak (Highest Point): This corresponds to the maximum blood volume in the arteries when the heart contracts.
+    • A Diastolic Point (Lowest Point): This occurs when the blood volume is at its lowest before the next heartbeat.
+The frequency of these peaks is directly related to heart rate, and their shape provides insights into blood circulation. However, the raw PPG signal can be noisy due to motion artifacts, ambient light, and sensor imperfections.
+
+2. Preprocessing the PPG Signal (Filtering)
+
+Before extracting features, the PPG signal must be cleaned to remove unwanted noise. This process involves:
+    • Removing High-Frequency Noise: Using a low-pass filter to eliminate sudden spikes and artifacts.
+    • Removing Slow Variations (Baseline Drift): Using a high-pass filter to focus on heartbeat-related changes.
+    • Smoothing the Signal: Applying signal processing techniques to improve peak detection.
+The cleaned signal is now ready for feature extraction.
+3. Peak Detection and RR Interval Calculation
+After filtering, we detect peaks in the PPG signal. These peaks represent heartbeats, and the time difference between two consecutive peaks is called the RR interval (measured in seconds).
+                                     RR Interval=Time between two successive peaks
+
+By analyzing RR intervals, we can calculate:
+    • Heart Rate (HR): The number of heartbeats per minute (BPM).  
+
+      Interval (s)HR= 60 / RR Interval (s)
+
+    • Heart Rate Variability (HRV): The variation in RR intervals, which provides insights into stress levels and cardiovascular health.
+4. Other Important Features in PPG Signals
+Apart from heart rate and RR intervals, we can extract additional features from the PPG signal:
+    • Pulse Amplitude: The height difference between peaks and valleys, indicating blood flow strength.
+    • Pulse Width: The time duration of each pulse, giving insights into arterial stiffness.
+    • Pulse Slope: The rate at which blood flow increases or decreases.
+These features are useful for diagnosing heart conditions and monitoring overall health.
+
+Source code:
+
+
+import neurokit2 as nk
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1. Generate a synthetic PPG signal (replace this with real PPG data)
+ppg_signal = nk.ppg_simulate(duration=30, sampling_rate=1000)
+
+# Plot the original PPG signal
+plt.figure(figsize=(10, 4))
+plt.plot(ppg_signal, label="Original PPG Signal")
+plt.title("Original PPG Signal")
+plt.xlabel("Time (ms)")
+plt.ylabel("Amplitude")
+plt.legend()
+plt.show()
+
+
+
+
+
+
+# 2. Filter the signal
+ppg_filtered = nk.ppg_clean(ppg_signal, sampling_rate=1000)
+
+# Plot the filtered PPG signal
+plt.figure(figsize=(10, 4))
+plt.plot(ppg_filtered, label="Filtered PPG Signal", color="orange")
+plt.title("Filtered PPG Signal")
+plt.xlabel("Time (ms)")
+plt.ylabel("Amplitude")
+plt.legend()
+plt.show()
+
+
+
+# 3. Detect Peaks
+peaks = nk.ppg_findpeaks(ppg_filtered, sampling_rate=1000)
+peak_indices = peaks["PPG_Peaks"]
+
+# Plot the filtered signal with detected peaks
+plt.figure(figsize=(10, 4))
+plt.plot(ppg_filtered, label="Filtered PPG Signal", color="orange")
+plt.scatter(peak_indices, ppg_filtered[peak_indices], color="red", label="Detected Peaks")
+plt.title("Filtered PPG Signal with Detected Peaks")
+plt.xlabel("Time (ms)")
+plt.ylabel("Amplitude")
+plt.legend()
+plt.show()
+
+
+
+
+
+# 4. Calculate RR Intervals
+rr_intervals = np.diff(peak_indices) / 1000 # Convert to seconds
+
+# Plot RR intervals
+plt.figure(figsize=(10, 4))
+plt.plot(rr_intervals, label="RR Intervals", color="green", marker="o")
+plt.title("RR Intervals (Seconds)")
+plt.xlabel("Peak Index")
+plt.ylabel("Interval (s)")
+plt.legend()
+plt.show()
+
+
+
+# 5. Calculate Heart Rate
+heart_rate = 60 / rr_intervals # BPM
+
+# Plot Heart Rate
+plt.figure(figsize=(10, 4))
+plt.plot(heart_rate, label="Heart Rate (BPM)", color="purple", marker="o")
+plt.title("Heart Rate (BPM)")
+plt.xlabel("Interval Index")
+plt.ylabel("Heart Rate (BPM)")
+plt.legend()
+plt.show()
+
+
+
+Feature extraction from a PPG signal is crucial for understanding heart health. By filtering the signal, detecting peaks, and analyzing RR intervals, we can calculate heart rate and other important cardiovascular metrics. These techniques make PPG-based monitoring an effective tool for wearable devices and medical applications.
+
+Lab Report on Discrete Fourier Transform (DFT)
+
+Theory
+The Discrete Fourier Transform (DFT) is a mathematical technique used to transform a discrete-time signal from the time domain into the frequency domain. It is a fundamental tool in digital signal processing (DSP) and is widely used for analyzing the frequency content of signals, filtering, and spectral analysis.
+The DFT of a discrete-time signal x[n] of length N is defined as:
+
+X[k]=n=0∑ N−1​x[n]e−jN2π​kn  for k=0,1,2,…,N−1
+
+where:
+    • X[k] is the DFT of the signal x[n], representing the frequency components.
+    • k is the frequency index.
+    • N is the total number of samples in the signal.
+The inverse DFT (IDFT) is used to reconstruct the original signal from its frequency components and is given by:
+
+x[n]=N1​k=0∑N−1​X[k]ejN2π​knfor n=0,1,2,…,N−1
+
+Key Points:
+    1. Frequency Resolution: The frequency resolution of the DFT depends on the number of samples N and the sampling rate fs​. The frequency resolution is given by Nfs​​.
+    2. Periodicity: The DFT assumes that the signal is periodic with period N. This means that the signal repeats itself every N samples.
+    3. Fast Fourier Transform (FFT): The FFT is an efficient algorithm to compute the DFT, reducing the computational complexity from O(N2) to O(NlogN).
+
+Applications:
+    • Spectral Analysis: The DFT is used to analyze the frequency content of signals, such as audio, vibration, and biomedical signals.
+    • Filtering: By transforming a signal into the frequency domain, unwanted frequency components can be filtered out.
+    • Signal Compression: The DFT is used in compression algorithms like JPEG and MP3 to reduce the size of data by removing redundant frequency components.
+Steps to Perform DFT:
+    1. Sampling: Obtain a discrete-time signal x[n] by sampling a continuous-time signal at a rate fs​.
+    2. Windowing: Apply a window function (e.g., Hamming, Hanning) to reduce spectral leakage.
+    3. Compute DFT: Use the FFT algorithm to compute the DFT of the signal.
+    4. Analyze Spectrum: Plot the magnitude and phase of the DFT to analyze the frequency content of the signal.
+
+Source code
+# Implementing DFT in Python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def DFT(x):
+"""
+Compute the Discrete Fourier Transform (DFT) of a 1D signal.
+"""
+N = len(x)
+X = np.zeros(N, dtype=complex) # Output array (complex numbers)
+
+for k in range(N): # Loop over frequency bins
+for n in range(N): # Loop over time samples
+X[k] += x[n] * np.exp(-2j * np.pi * k * n / N)
+return X
+
+# Create a sample signal (two sine waves)
+Fs = 1000 # Sampling rate
+T = 1 / Fs # Sampling interval
+t = np.linspace(0, 1, Fs, endpoint=False) # 1 second duration
+
+# Signal: Combination of 50 Hz and 120 Hz sine waves
+f1, f2= 50, 120 #f3=150
+signal = np.sin(2 * np.pi * f1 * t) + 0.5 * np.sin(2 * np.pi * f2 * t) #+ 1.5 * np.sin(2 * np.pi * f3 * t)
+
+plt.plot(t,signal) # Single-sided spectrum
+plt.title("Time domain signal")
+plt.xlabel("time")
+plt.ylabel("amplitude")
+plt.grid()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Compute DFT
+dft_output = DFT(signal)
+
+# Compute frequency bins
+freqs = np.fft.fftfreq(len(dft_output), T)
+
+# Plot magnitude spectrum (single-sided)
+plt.figure(figsize=(10, 5))
+plt.plot(freqs[:Fs//2], np.abs(dft_output[:Fs//2])) # Single-sided spectrum
+plt.title("DFT Frequency Spectrum")
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Magnitude")
+plt.grid()
+plt.show()
+
+
+
+
+# Compute Frequency Bins Using NumPy
+# Instead of computing manually, NumPy provides a built-in function np.fft.fftfreq(), which calculates the bins directly.
+# python
+# CopyEdit
+import numpy as np
+
+N = 1024 # Number of points in DFT
+Fs = 1000 # Sampling frequency
+
+# Compute frequency bins using NumPy
+freq_bins = np.fft.fftfreq(N, d=1/Fs)
+
+print(freq_bins[:10]) # Print first 10 frequency bins
+
+[0. 0.9765625 1.953125 2.9296875 3.90625 4.8828125 5.859375 6.8359375 7.8125 8.7890625]
+
+# Example: Removing Noise from an Audio Signal
+# We'll generate a noisy audio signal, apply FFT, filter out high-frequency noise, and reconstruct the cleaned signal using Inverse FFT.
+# Steps:
+# 1. Generate an audio signal (a pure sine wave of 440 Hz).
+# 2. Add random noise.
+# 3. Apply FFT to transform the signal to the frequency domain.
+# 4. Remove noise by filtering high frequencies.
+# 5. Apply Inverse FFT to get back the cleaned signal.
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fft import fft, ifft, fftfreq
+
+# Generate a sample audio signal
+Fs = 1000 # Sampling rate (1000 Hz)
+T = 1 / Fs # Sampling interval
+t = np.linspace(0, 1, Fs, endpoint=False) # 1 second time vector
+
+# Generate a pure sine wave (440 Hz, like an "A4" musical note)
+freq_signal = 440
+pure_signal = np.sin(2 * np.pi * freq_signal * t)
+
+# Add random noise
+noise = np.random.normal(0, 0.5, pure_signal.shape)
+noisy_signal = pure_signal + noise
+
+# Apply FFT
+fft_signal = fft(noisy_signal)
+freqs = fftfreq(len(fft_signal), T) # Frequency bins
+
+# Filter: Remove frequencies higher than 500 Hz
+fft_filtered = fft_signal.copy()
+fft_filtered[np.abs(freqs) > 500] = 0 # Zero out high frequencies (noise)
+
+# Apply Inverse FFT to get the cleaned signal
+cleaned_signal = ifft(fft_filtered).real
+
+# Plot the results
+plt.figure(figsize=(12, 6))
+
+plt.subplot(3, 1, 1)
+plt.plot(t, pure_signal, label="Original Signal (440 Hz)")
+plt.legend()
+plt.title("Original Pure Signal")
+
+plt.subplot(3, 1, 2)
+plt.plot(t, noisy_signal, label="Noisy Signal", color="red")
+plt.legend()
+plt.title("Noisy Signal")
+
+plt.subplot(3, 1, 3)
+plt.plot(t, cleaned_signal, label="Cleaned Signal (After FFT Filtering)", color="yellow")
+plt.legend()
+plt.title("Filtered Signal (Noise Removed)")
+
+plt.tight_layout()
+plt.show()
+
+
+
 
 
