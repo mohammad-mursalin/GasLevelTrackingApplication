@@ -1,0 +1,1446 @@
+Verification of Fisher’s Lemma Using Simulated Data from Normal Distributions
+
+Theory Behind the Problem
+Fisher’s Lemma
+Fisher’s Lemma is a fundamental result in statistics that states:
+    1. For a sample of size n drawn from a normal distribution N(μ,σ2), the sample mean Xˉ and the sample variance S2 are independent random variables.
+    2. The sample mean Xˉ follows a normal distribution:
+       Xˉ∼N(μ,nσ2​)
+    3. The sample variance S2 follows a scaled chi-squared distribution:
+       σ2(n−1)S2​∼χn−12​
+This lemma is crucial in statistical inference, particularly in hypothesis testing and confidence interval estimation.
+Objective of the Lab
+The goal of this lab is to verify Fisher’s Lemma using simulated data from a normal distribution. Specifically, we will:
+    1. Simulate multiple samples from a normal distribution.
+    2. Compute the sample mean and sample variance for each sample.
+    3. Check the independence of the sample mean and sample variance by calculating their correlation.
+    4. Visualize the distributions of the sample means and sample variances to confirm they follow the theoretical distributions.
+
+Explanation of the Code
+1. Setting Parameters
+mu <- 5
+sigma <- 2
+n <- 30
+N_sim <- 1000
+    • mu: The population mean (μ) of the normal distribution.
+    • sigma: The population standard deviation (σ) of the normal distribution.
+    • n: The sample size for each simulation.
+    • N_sim: The number of simulations to run (1,000 samples will be generated).
+
+2. Initialize Vectors
+sample_means <- numeric(N_sim)
+sample_vars <- numeric(N_sim)
+    • sample_means: A vector to store the sample means (Xˉ) for each simulation.
+    • sample_vars: A vector to store the sample variances (S2) for each simulation.
+
+3. Simulation Loop
+set.seed(123)
+for (i in 1:N_sim) {
+  data <- rnorm(n, mean = mu, sd = sigma)
+  sample_means[i] <- mean(data)
+  sample_vars[i] <- var(data)
+}
+    • set.seed(123): Ensures reproducibility by setting a random seed.
+    • rnorm(n, mean = mu, sd = sigma): Generates a sample of size n from a normal distribution with mean μ and standard deviation σ.
+    • mean(data): Computes the sample mean for the generated data.
+    • var(data): Computes the sample variance for the generated data.
+
+
+4. Check Correlation
+correlation <- cor(sample_means, sample_vars)
+print(paste("Correlation between sample mean and sample variance:", correlation))
+    • cor(sample_means, sample_vars): Computes the correlation between the sample means and sample variances.
+    • The correlation should be close to 0, as Fisher’s Lemma states that the sample mean and sample variance are independent.
+
+
+5. Graphical Output
+par(mfrow = c(2, 2))
+    • par(mfrow = c(2, 2)): Sets up a 2x2 grid for plotting.
+
+Histogram of Sample Means
+hist(sample_means, breaks = 30, col = "lightblue", main = "Distribution of Sample Means", xlab = "Sample Mean")
+curve(dnorm(x, mean = mu, sd = sigma/sqrt(n)), add = TRUE, col = "red", lwd = 2)
+    • hist(sample_means, ...): Plots a histogram of the sample means.
+    • curve(dnorm(x, mean = mu, sd = sigma/sqrt(n)), ...): Overlays the theoretical normal distribution for the sample means.
+
+Histogram of Sample Variances
+hist(sample_vars, breaks = 30, col = "lightgreen", main = "Distribution of Sample Variances", xlab = "Sample Variance")
+curve(dchisq((x * (n-1)) / sigma^2, df = n-1) * (n-1)/sigma^2, add = TRUE, col = "blue", lwd = 2)
+    • hist(sample_vars, ...): Plots a histogram of the sample variances.
+    • curve(dchisq(...), ...): Overlays the theoretical chi-squared distribution for the sample variances.
+
+Scatterplot of Sample Means vs. Sample Variances
+plot(sample_means, sample_vars, pch = 19, col = rgb(0, 0, 1, 0.5), main = "Sample Mean vs. Sample Variance", xlab = "Sample Mean", ylab = "Sample Variance")
+abline(h = sigma^2, col = "red", lwd = 2)
+    • plot(sample_means, sample_vars, ...): Creates a scatterplot of sample means vs. sample variances.
+    • abline(h = sigma^2, ...): Adds a horizontal line at the population variance (σ2).
+
+
+Q-Q Plot for Sample Means
+qqnorm(sample_means, main = "Q-Q Plot for Sample Means", col = "blue")
+qqline(sample_means, col = "red", lwd = 2)
+    • qqnorm(sample_means, ...): Creates a Q-Q plot to check if the sample means follow a normal distribution.
+    • qqline(sample_means, ...): Adds a reference line for the Q-Q plot.
+
+How the Approach Proves the Lab Problem
+    1. Independence of Sample Mean and Sample Variance:
+        ◦ The correlation between the sample means and sample variances is computed and should be close to 0, confirming their independence as stated by Fisher’s Lemma.
+    2. Distribution of Sample Means:
+        ◦ The histogram of sample means is compared to the theoretical normal distribution N(μ,σ2/n). The close match verifies that the sample means follow the expected distribution.
+    3. Distribution of Sample Variances:
+        ◦ The histogram of sample variances is compared to the theoretical chi-squared distribution χn−12​. The close match verifies that the sample variances follow the expected distribution.
+    4. Visual Confirmation:
+        ◦ The scatterplot shows no clear relationship between the sample means and sample variances, further confirming their independence.
+        ◦ The Q-Q plot for the sample means confirms that they are normally distributed.
+By simulating data and analyzing the results, we empirically verify Fisher’s Lemma and its theoretical predictions.
+
+how does the output verifies the statement
+The output file Rplots.pdf contains graphical representations of the simulation results, which help verify Fisher’s Lemma. Let’s break down how each plot in the output verifies the statement:
+
+1. Distribution of Sample Means
+    • What it shows: A histogram of the sample means (Xˉ) from the 1,000 simulations.
+    • Verification:
+        ◦ The histogram should closely match the theoretical normal distribution N(μ,σ2/n), where μ=5 and σ2/n=4/30≈0.133.
+        ◦ The red curve overlaid on the histogram represents this theoretical distribution. If the histogram aligns well with the red curve, it confirms that the sample means follow the expected normal distribution.
+        ◦ This verifies the first part of Fisher’s Lemma, which states that the sample mean Xˉ is normally distributed.
+
+2. Distribution of Sample Variances
+    • What it shows: A histogram of the sample variances (S2) from the 1,000 simulations.
+    • Verification:
+        ◦ The histogram should closely match the theoretical chi-squared distribution scaled by σ2/(n−1). Specifically, σ2(n−1)S2​∼χn−12​.
+        ◦ The blue curve overlaid on the histogram represents this theoretical distribution. If the histogram aligns well with the blue curve, it confirms that the sample variances follow the expected chi-squared distribution.
+        ◦ This verifies the second part of Fisher’s Lemma, which states that the sample variance S2 follows a scaled chi-squared distribution.
+
+3. Scatterplot of Sample Means vs. Sample Variances
+    • What it shows: A scatterplot of the sample means (Xˉ) against the sample variances (S2).
+    • Verification:
+        ◦ Fisher’s Lemma states that the sample mean and sample variance are independent. If they are independent, there should be no clear pattern or relationship in the scatterplot.
+        ◦ The scatterplot should show a random cloud of points with no visible trend (e.g., no increasing or decreasing pattern).
+        ◦ The horizontal red line at y=σ2=4 represents the population variance. The points should be scattered around this line without any systematic deviation.
+        ◦ This confirms the independence of the sample mean and sample variance, as stated by Fisher’s Lemma.
+
+4. Q-Q Plot for Sample Means
+    • What it shows: A Q-Q (quantile-quantile) plot of the sample means (Xˉ).
+    • Verification:
+        ◦ A Q-Q plot compares the quantiles of the sample data to the quantiles of a theoretical distribution (in this case, the normal distribution).
+        ◦ If the sample means are normally distributed, the points in the Q-Q plot should fall approximately along the red reference line.
+        ◦ The close alignment of the points with the red line confirms that the sample means follow a normal distribution, as predicted by Fisher’s Lemma.
+
+
+
+Generation and Analysis of χ2-Distributed Data
+
+Theory Behind the Problem
+Chi-Squared Distribution
+The chi-squared distribution is a continuous probability distribution that is widely used in statistical inference, particularly in hypothesis testing and confidence interval estimation. Key properties of the chi-squared distribution include:
+    1. Degrees of Freedom (k): The shape of the distribution depends on the degrees of freedom (k).
+    2. Mean and Variance:
+        ◦ The mean of a chi-squared distribution is equal to the degrees of freedom: μ=k.
+        ◦ The variance is twice the degrees of freedom: σ2=2k.
+    3. Shape: The distribution is skewed to the right, especially for small k, but becomes more symmetric as k increases.
+Objective of the Lab
+The goal of this lab is to:
+    1. Generate random data from a chi-squared distribution with a specified degrees of freedom (k=5).
+    2. Compute the sample mean and variance of the generated data and compare them to the theoretical values.
+    3. Visualize the distribution of the data using a histogram, density plot, and Q-Q plot to confirm that it follows the expected chi-squared distribution.
+
+Explanation of the Code
+1. Parameters
+R
+Copy
+k <- 5
+N_sim <- 1000
+    • k: Degrees of freedom for the chi-squared distribution.
+    • N_sim: Number of random samples to generate (1,000 in this case).
+2. Generate Chi-Squared Data
+R
+Copy
+set.seed(123)
+chi2_data <- rchisq(N_sim, df = k)
+    • set.seed(123): Ensures reproducibility by setting a random seed.
+    • rchisq(N_sim, df = k): Generates 1,000 random samples from a chi-squared distribution with k=5 degrees of freedom.
+3. Compute Mean and Variance
+R
+Copy
+mean_chi2 <- mean(chi2_data)
+var_chi2 <- var(chi2_data)
+print(paste("Mean:", mean_chi2))
+print(paste("Variance:", var_chi2))
+    • mean(chi2_data): Computes the sample mean of the generated data.
+    • var(chi2_data): Computes the sample variance of the generated data.
+    • The theoretical mean is μ=k=5, and the theoretical variance is σ2=2k=10. The computed values should be close to these theoretical values.
+4. Graphical Output
+R
+Copy
+par(mfrow = c(1, 3))
+    • par(mfrow = c(1, 3)): Sets up a 1x3 grid for plotting.
+Histogram
+R
+Copy
+hist(chi2_data, breaks = 30, col = "lightblue", probability = TRUE, main = "Chi-Squared Distribution", xlab = "Value")
+curve(dchisq(x, df = k), add = TRUE, col = "red", lwd = 2)
+    • hist(chi2_data, ...): Plots a histogram of the generated chi-squared data.
+    • curve(dchisq(x, df = k), ...): Overlays the theoretical chi-squared distribution with k=5 degrees of freedom.
+Density Plot
+R
+Copy
+plot(density(chi2_data), col = "blue", lwd = 2, main = "Density Plot", xlab = "Value")
+curve(dchisq(x, df = k), add = TRUE, col = "red", lwd = 2)
+    • plot(density(chi2_data), ...): Plots the kernel density estimate of the generated data.
+    • curve(dchisq(x, df = k), ...): Overlays the theoretical chi-squared density curve.
+Q-Q Plot
+R
+Copy
+qqplot(qchisq(ppoints(N_sim), df = k), chi2_data, main = "Q-Q Plot for Chi-Squared Data", col = "blue", xlab = "Theoretical Quantiles", ylab = "Sample Quantiles")
+abline(0, 1, col = "red", lwd = 2)
+    • qqplot(...): Creates a Q-Q plot comparing the quantiles of the generated data to the quantiles of the theoretical chi-squared distribution.
+    • abline(0, 1, ...): Adds a reference line to the Q-Q plot. If the data follows the theoretical distribution, the points should fall close to this line.
+
+How the Output Verifies the Statement
+1. Histogram
+    • The histogram shows the distribution of the generated chi-squared data.
+    • The red curve represents the theoretical chi-squared distribution with k=5 degrees of freedom.
+    • If the histogram aligns well with the red curve, it confirms that the generated data follows the expected chi-squared distribution.
+2. Density Plot
+    • The density plot provides a smoothed version of the histogram.
+    • The blue curve represents the kernel density estimate of the generated data, while the red curve represents the theoretical chi-squared density.
+    • The close match between the blue and red curves further confirms that the data follows the chi-squared distribution.
+3. Q-Q Plot
+    • The Q-Q plot compares the quantiles of the generated data to the quantiles of the theoretical chi-squared distribution.
+    • If the data follows the theoretical distribution, the points should fall close to the red reference line.
+    • The alignment of the points with the line confirms that the data is chi-squared distributed.
+4. Mean and Variance
+    • The computed mean and variance of the generated data should be close to the theoretical values:
+        ◦ Theoretical mean: μ=k=5.
+        ◦ Theoretical variance: σ2=2k=10.
+    • If the computed values are close to these theoretical values, it further verifies that the data follows the chi-squared distribution.
+
+Conclusion
+The output file Rplots2.pdf and the associated code provide strong evidence that the generated data follows a chi-squared distribution with k=5 degrees of freedom. The histogram, density plot, and Q-Q plot all align with the theoretical predictions, and the computed mean and variance match the expected values. This confirms the properties of the chi-squared distribution and validates the simulation approach.
+
+
+Comparison of t-Distribution with Normal Distribution for Small Sample Sizes
+
+Theory Behind the Problem
+t-Distribution vs. Normal Distribution
+    1. t-Distribution:
+        ◦ The t-distribution is used when working with small sample sizes (typically n<30) or when the population standard deviation is unknown.
+        ◦ It has heavier tails than the normal distribution, meaning it is more prone to producing values that fall far from the mean.
+        ◦ The shape of the t-distribution depends on the degrees of freedom (df), where df=n−1 for a sample of size n.
+        ◦ As the degrees of freedom increase, the t-distribution approaches the normal distribution.
+    2. Normal Distribution:
+        ◦ The normal distribution is symmetric and bell-shaped, with tails that decay exponentially.
+        ◦ It is used when the sample size is large (Central Limit Theorem) or when the population standard deviation is known.
+        ◦ The normal distribution has lighter tails compared to the t-distribution.
+Objective of the Lab
+The goal of this lab is to:
+    1. Generate random data from both the t-distribution and the normal distribution.
+    2. Compare the shapes of the two distributions using histograms, density plots, and Q-Q plots.
+    3. Highlight the differences in their tails and overall shapes, especially for small sample sizes.
+
+Explanation of the Code
+1. Parameters
+R
+Copy
+n <- 10
+N_sim <- 1000
+    • n: Sample size (small sample size, n=10).
+    • N_sim: Number of simulations (1,000 random samples will be generated for each distribution).
+2. Generate Data
+R
+Copy
+set.seed(123)
+t_data <- rt(N_sim, df = n-1)
+normal_data <- rnorm(N_sim)
+    • set.seed(123): Ensures reproducibility by setting a random seed.
+    • rt(N_sim, df = n-1): Generates 1,000 random samples from a t-distribution with df=n−1=9 degrees of freedom.
+    • rnorm(N_sim): Generates 1,000 random samples from a standard normal distribution (μ=0, σ=1).
+3. Graphical Output
+R
+Copy
+par(mfrow = c(2, 2))
+    • par(mfrow = c(2, 2)): Sets up a 2x2 grid for plotting.
+Histogram of t-Distribution
+R
+Copy
+hist(t_data, breaks = 30, col = "lightblue", probability = TRUE, main = "t-Distribution", xlab = "Value", border = "white")
+curve(dt(x, df = n-1), add = TRUE, col = "red", lwd = 2)
+    • hist(t_data, ...): Plots a histogram of the t-distribution data.
+    • curve(dt(x, df = n-1), ...): Overlays the theoretical t-distribution with df=9.
+Histogram of Normal Distribution
+R
+Copy
+hist(normal_data, breaks = 30, col = "lightgreen", probability = TRUE, main = "Normal Distribution", xlab = "Value", border = "white")
+curve(dnorm(x), add = TRUE, col = "blue", lwd = 2)
+    • hist(normal_data, ...): Plots a histogram of the normal distribution data.
+    • curve(dnorm(x), ...): Overlays the theoretical standard normal distribution.
+Density Plot Comparison
+R
+Copy
+plot(density(t_data), col = "red", lwd = 2, main = "Density Comparison", xlab = "Value", ylim = c(0, 0.4))
+lines(density(normal_data), col = "blue", lwd = 2)
+legend("topright", legend = c("t-Distribution", "Normal Distribution"), col = c("red", "blue"), lwd = 2)
+    • plot(density(t_data), ...): Plots the kernel density estimate of the t-distribution data.
+    • lines(density(normal_data), ...): Adds the kernel density estimate of the normal distribution data.
+    • The legend function adds a legend to distinguish between the two distributions.
+Q-Q Plot for t-Distribution
+R
+Copy
+qqplot(qt(ppoints(N_sim), df = n-1), t_data, main = "Q-Q Plot for t-Distribution", col = "red", xlab = "Theoretical Quantiles", ylab = "Sample Quantiles")
+abline(0, 1, col = "blue", lwd = 2)
+    • qqplot(...): Creates a Q-Q plot comparing the quantiles of the t-distribution data to the quantiles of the theoretical t-distribution.
+    • abline(0, 1, ...): Adds a reference line to the Q-Q plot. If the data follows the theoretical distribution, the points should fall close to this line.
+
+How the Output Verifies the Statement
+1. Histogram of t-Distribution
+    • The histogram shows the distribution of the t-distribution data.
+    • The red curve represents the theoretical t-distribution with df=9.
+    • The histogram aligns well with the red curve, confirming that the data follows the t-distribution.
+2. Histogram of Normal Distribution
+    • The histogram shows the distribution of the normal distribution data.
+    • The blue curve represents the theoretical standard normal distribution.
+    • The histogram aligns well with the blue curve, confirming that the data follows the normal distribution.
+3. Density Plot Comparison
+    • The density plot compares the kernel density estimates of the t-distribution (red) and the normal distribution (blue).
+    • The t-distribution has heavier tails (more spread out) compared to the normal distribution, which is evident from the plot.
+    • This confirms that the t-distribution is more prone to extreme values than the normal distribution.
+4. Q-Q Plot for t-Distribution
+    • The Q-Q plot compares the quantiles of the t-distribution data to the theoretical t-distribution.
+    • The points fall close to the reference line, confirming that the data follows the t-distribution.
+
+Conclusion
+The output file Rplots3.pdf and the associated code demonstrate the differences between the t-distribution and the normal distribution for small sample sizes. The key observations are:
+    1. The t-distribution has heavier tails than the normal distribution, making it more suitable for small sample sizes.
+    2. The histograms and density plots confirm that the generated data follows the expected distributions.
+    3. The Q-Q plot validates that the t-distribution data aligns with the theoretical t-distribution.
+
+
+Simulation of F-Distributed Data and Its Relationship with χ2-Distributions
+
+Theory Behind the Problem
+F-Distribution
+The F-distribution is a continuous probability distribution that arises frequently in statistical inference, particularly in the analysis of variance (ANOVA) and regression analysis. Key properties of the F-distribution include:
+    1. Degrees of Freedom:
+        ◦ The F-distribution has two degrees of freedom parameters: df1​ (numerator degrees of freedom) and df2​ (denominator degrees of freedom).
+    2. Relationship with Chi-Squared Distributions:
+        ◦ The F-distribution is defined as the ratio of two independent chi-squared distributions, each divided by their respective degrees of freedom:
+          F=χ22​/df2​χ12​/df1​​
+        ◦ Here, χ12​ and χ22​ are independent chi-squared random variables with df1​ and df2​ degrees of freedom, respectively.
+    3. Shape:
+        ◦ The F-distribution is positively skewed, and its shape depends on the values of df1​ and df2​.
+Objective of the Lab
+The goal of this lab is to:
+    1. Simulate F-distributed data using two independent chi-squared distributions.
+    2. Visualize the F-distribution using a histogram, density plot, Q-Q plot, and boxplot.
+    3. Confirm that the simulated data follows the theoretical F-distribution.
+
+Explanation of the Code
+1. Parameters
+R
+Copy
+df1 <- 5
+df2 <- 10
+N_sim <- 1000
+    • df1: Degrees of freedom for the numerator chi-squared distribution (χ12​).
+    • df2: Degrees of freedom for the denominator chi-squared distribution (χ22​).
+    • N_sim: Number of simulations (1,000 random samples will be generated).
+2. Generate F-Distributed Data
+R
+Copy
+set.seed(123)
+chi2_1 <- rchisq(N_sim, df = df1)
+chi2_2 <- rchisq(N_sim, df = df2)
+f_data <- (chi2_1 / df1) / (chi2_2 / df2)
+    • set.seed(123): Ensures reproducibility by setting a random seed.
+    • rchisq(N_sim, df = df1): Generates 1,000 random samples from a chi-squared distribution with df1​=5 degrees of freedom.
+    • rchisq(N_sim, df = df2): Generates 1,000 random samples from a chi-squared distribution with df2​=10 degrees of freedom.
+    • f_data <- (chi2_1 / df1) / (chi2_2 / df2): Computes the F-distributed data as the ratio of the two chi-squared distributions, each scaled by their degrees of freedom.
+3. Graphical Output
+R
+Copy
+par(mfrow = c(2, 2))
+    • par(mfrow = c(2, 2)): Sets up a 2x2 grid for plotting.
+Histogram
+R
+Copy
+hist(f_data, breaks = 30, col = "lightblue", probability = TRUE, main = "F-Distribution", xlab = "Value", border = "white")
+curve(df(x, df1 = df1, df2 = df2), add = TRUE, col = "red", lwd = 2)
+    • hist(f_data, ...): Plots a histogram of the F-distributed data.
+    • curve(df(x, df1 = df1, df2 = df2), ...): Overlays the theoretical F-distribution with df1​=5 and df2​=10.
+Density Plot
+R
+Copy
+plot(density(f_data), col = "blue", lwd = 2, main = "Density Plot", xlab = "Value")
+curve(df(x, df1 = df1, df2 = df2), add = TRUE, col = "red", lwd = 2)
+    • plot(density(f_data), ...): Plots the kernel density estimate of the F-distributed data.
+    • curve(df(x, df1 = df1, df2 = df2), ...): Overlays the theoretical F-distribution density curve.
+Q-Q Plot
+R
+Copy
+qqplot(qf(ppoints(N_sim), df1 = df1, df2 = df2), f_data, main = "Q-Q Plot for F-Distribution", col = "blue", xlab = "Theoretical Quantiles", ylab = "Sample Quantiles")
+abline(0, 1, col = "red", lwd = 2)
+    • qqplot(...): Creates a Q-Q plot comparing the quantiles of the F-distributed data to the quantiles of the theoretical F-distribution.
+    • abline(0, 1, ...): Adds a reference line to the Q-Q plot. If the data follows the theoretical distribution, the points should fall close to this line.
+Boxplot
+R
+Copy
+boxplot(f_data, col = "lightgreen", main = "Boxplot of F-Distributed Data", ylab = "Value")
+    • boxplot(f_data, ...): Creates a boxplot of the F-distributed data, showing the median, quartiles, and potential outliers.
+
+How the Output Verifies the Statement
+1. Histogram
+    • The histogram shows the distribution of the F-distributed data.
+    • The red curve represents the theoretical F-distribution with df1​=5 and df2​=10.
+    • The histogram aligns well with the red curve, confirming that the data follows the expected F-distribution.
+2. Density Plot
+    • The density plot provides a smoothed version of the histogram.
+    • The blue curve represents the kernel density estimate of the F-distributed data, while the red curve represents the theoretical F-distribution density.
+    • The close match between the blue and red curves further confirms that the data follows the F-distribution.
+3. Q-Q Plot
+    • The Q-Q plot compares the quantiles of the F-distributed data to the quantiles of the theoretical F-distribution.
+    • If the data follows the theoretical distribution, the points should fall close to the red reference line.
+    • The alignment of the points with the line confirms that the data is F-distributed.
+4. Boxplot
+    • The boxplot shows the spread and skewness of the F-distributed data.
+    • The F-distribution is positively skewed, which is reflected in the boxplot.
+
+Conclusion
+The output file Rplots4.pdf and the associated code demonstrate the properties of the F-distribution and its relationship with chi-squared distributions. The key observations are:
+    1. The F-distributed data follows the theoretical F-distribution, as confirmed by the histogram, density plot, and Q-Q plot.
+    2. The boxplot highlights the positive skewness of the F-distribution.
+    3. The simulation successfully verifies the relationship between the F-distribution and chi-squared distributions.
+
+
+Compare Biased and Unbiased Estimators
+
+Theory Behind the Problem
+Biased vs. Unbiased Estimators
+    1. Unbiased Sample Variance:
+        ◦ The unbiased estimator of the sample variance is given by:
+          S2=n−11​i=1∑n​(Xi​−Xˉ)2
+        ◦ Here, n−1 is used in the denominator to correct for the bias in the estimation of the population variance (σ2).
+        ◦ This estimator is unbiased because its expected value equals the population variance: E[S2]=σ2.
+    2. Biased Sample Variance:
+        ◦ The biased estimator of the sample variance is given by:
+          S~2=n1​i=1∑n​(Xi​−Xˉ)2
+        ◦ Here, n is used in the denominator, which leads to a biased estimate of the population variance.
+        ◦ This estimator is biased because its expected value is less than the population variance: E[S~2]=nn−1​σ2.
+Objective of the Lab
+The goal of this lab is to:
+    1. Simulate data from a normal distribution.
+    2. Compute both the unbiased and biased sample variances for each simulation.
+    3. Compare the distributions of the two estimators and verify their properties.
+
+Explanation of the Code
+1. Parameters
+R
+Copy
+mu <- 5
+sigma <- 2
+n <- 30
+N_sim <- 1000
+    • mu: The population mean (μ) of the normal distribution.
+    • sigma: The population standard deviation (σ) of the normal distribution.
+    • n: The sample size for each simulation.
+    • N_sim: The number of simulations (1,000 samples will be generated).
+2. Initialize Vectors
+R
+Copy
+sample_vars <- numeric(N_sim)
+biased_vars <- numeric(N_sim)
+    • sample_vars: A vector to store the unbiased sample variances (S2) for each simulation.
+    • biased_vars: A vector to store the biased sample variances (S~2) for each simulation.
+3. Simulation Loop
+R
+Copy
+set.seed(123)
+for (i in 1:N_sim) {
+  data <- rnorm(n, mean = mu, sd = sigma)
+  sample_vars[i] <- var(data)
+  biased_vars[i] <- sum((data - mean(data))^2) / n
+}
+    • set.seed(123): Ensures reproducibility by setting a random seed.
+    • rnorm(n, mean = mu, sd = sigma): Generates a sample of size n from a normal distribution with mean μ and standard deviation σ.
+    • var(data): Computes the unbiased sample variance.
+    • sum((data - mean(data))^2) / n: Computes the biased sample variance.
+4. Graphical Output
+R
+Copy
+par(mfrow = c(1, 2))
+    • par(mfrow = c(1, 2)): Sets up a 1x2 grid for plotting.
+Histogram of Unbiased Variances
+R
+Copy
+hist(sample_vars, breaks = 30, col = "lightblue", main = "Unbiased Sample Variance", xlab = "Variance", border = "white")
+abline(v = sigma^2, col = "red", lwd = 2)
+    • hist(sample_vars, ...): Plots a histogram of the unbiased sample variances.
+    • abline(v = sigma^2, ...): Adds a vertical red line at the population variance (σ2=4).
+Histogram of Biased Variances
+R
+Copy
+hist(biased_vars, breaks = 30, col = "lightgreen", main = "Biased Sample Variance", xlab = "Variance", border = "white")
+abline(v = sigma^2, col = "red", lwd = 2)
+    • hist(biased_vars, ...): Plots a histogram of the biased sample variances.
+    • abline(v = sigma^2, ...): Adds a vertical red line at the population variance (σ2=4).
+
+How the Output Verifies the Statement
+1. Histogram of Unbiased Variances
+    • The histogram shows the distribution of the unbiased sample variances.
+    • The red vertical line represents the population variance (σ2=4).
+    • The mean of the unbiased sample variances should be close to the population variance, confirming that the estimator is unbiased.
+2. Histogram of Biased Variances
+    • The histogram shows the distribution of the biased sample variances.
+    • The red vertical line represents the population variance (σ2=4).
+    • The mean of the biased sample variances should be less than the population variance, confirming that the estimator is biased.
+3. Comparison of the Two Estimators
+    • The unbiased estimator centers around the population variance (σ2=4), while the biased estimator centers around a lower value (nn−1​σ2=3029​×4≈3.87).
+    • This demonstrates the effect of using n vs. n−1 in the denominator of the variance formula.
+
+Conclusion
+The output file Rplots.pdf and the associated code demonstrate the differences between biased and unbiased estimators of sample variance. The key observations are:
+    1. The unbiased estimator (S2) correctly estimates the population variance, as its distribution is centered around σ2=4.
+    2. The biased estimator (S~2) underestimates the population variance, as its distribution is centered around a lower value.
+    3. The histograms and vertical lines clearly illustrate the bias in the biased estimator and the correctness of the unbiased estimator.
+
+Derive MLEs for Binomial, Poisson, and Normal Distributions
+
+Implementation in R
+The provided R code implements the MLE derivations for the Binomial, Poisson, and Normal distributions:
+R
+Copy
+# Binomial MLE
+n_binom <- 20
+p_true <- 0.6
+data_binom <- rbinom(100, size = n_binom, prob = p_true)
+p_mle <- mean(data_binom) / n_binom
+
+# Poisson MLE
+lambda_true <- 3
+data_pois <- rpois(100, lambda = lambda_true)
+lambda_mle <- mean(data_pois)
+
+# Normal MLE
+mu_true <- 5
+sigma_true <- 2
+data_norm <- rnorm(100, mean = mu_true, sd = sigma_true)
+mu_mle <- mean(data_norm)
+sigma_mle <- sqrt(mean((data_norm - mu_mle)^2))
+
+# Output
+print(paste("Binomial MLE for p:", p_mle))
+print(paste("Poisson MLE for lambda:", lambda_mle))
+print(paste("Normal MLE for mu:", mu_mle))
+print(paste("Normal MLE for sigma:", sigma_mle))
+
+Explanation of the Code
+    1. Binomial MLE:
+        ◦ data_binom <- rbinom(100, size = n_binom, prob = p_true): Generates 100 samples from a Binomial distribution with n=20 and p=0.6.
+        ◦ p_mle <- mean(data_binom) / n_binom: Computes the MLE for p using the formula p^​MLE​=nxˉ​.
+    2. Poisson MLE:
+        ◦ data_pois <- rpois(100, lambda = lambda_true): Generates 100 samples from a Poisson distribution with λ=3.
+        ◦ lambda_mle <- mean(data_pois): Computes the MLE for λ using the formula λ^MLE​=xˉ.
+    3. Normal MLE:
+        ◦ data_norm <- rnorm(100, mean = mu_true, sd = sigma_true): Generates 100 samples from a Normal distribution with μ=5 and σ=2.
+        ◦ mu_mle <- mean(data_norm): Computes the MLE for μ using the formula μ^​MLE​=xˉ.
+        ◦ sigma_mle <- sqrt(mean((data_norm - mu_mle)^2)): Computes the MLE for σ using the formula σ^MLE​=N1​∑i=1N​(xi​−xˉ)2​.
+
+Output Interpretation
+    • The MLEs computed from the simulated data should be close to the true parameter values:
+        ◦ Binomial: ptrue​=0.6
+        ◦ Poisson: λtrue​=3
+        ◦ Normal: μtrue​=5, σtrue​=2
+
+
+Derive the Best Critical Region for Simple vs. Composite Hypotheses
+
+In hypothesis testing, the best critical region is the region of the sample space that maximizes the power of the test (i.e., the probability of correctly rejecting the null hypothesis H0​) while controlling the Type I error rate (i.e., the probability of incorrectly rejecting H0​). For simple vs. composite hypotheses, we use the Neyman-Pearson Lemma to derive the best critical region.
+
+Problem Setup
+Hypotheses
+    • Null Hypothesis (H0​): μ=μ0​ (simple hypothesis).
+    • Alternative Hypothesis (H1​): μ=μ1​ (simple hypothesis).
+Assumptions
+    • The data is normally distributed: X∼N(μ,σ2).
+    • The population standard deviation σ is known.
+    • The sample size is n=30.
+    • The significance level is α=0.05.
+
+Neyman-Pearson Lemma
+The Neyman-Pearson Lemma states that the likelihood ratio test provides the most powerful test for simple hypotheses. The likelihood ratio is defined as:
+Λ(x)=L(μ0​∣x)L(μ1​∣x)​
+where:
+    • L(μ1​∣x) is the likelihood of the data under H1​.
+    • L(μ0​∣x) is the likelihood of the data under H0​.
+The critical region is defined as:
+Λ(x)>k
+where k is chosen such that the Type I error rate is α.
+
+Derivation of the Critical Region
+For a normal distribution, the likelihood ratio simplifies to:
+Λ(x)=exp(σ2n(μ1​−μ0​)​(xˉ−2μ0​+μ1​​))
+Taking the logarithm, the critical region becomes:
+xˉ>c
+where c is the critical value determined by the significance level α.
+The critical value c is computed as:
+c=μ0​+z1−α​⋅n​σ​
+where z1−α​ is the (1−α)-quantile of the standard normal distribution.
+
+Implementation in R
+The provided R code implements the likelihood ratio test and computes the critical region:
+R
+Copy
+# Parameters
+mu0 <- 5 # Null hypothesis mean
+mu1 <- 6 # Alternative hypothesis mean
+sigma <- 2 # Population standard deviation
+n <- 30 # Sample size
+alpha <- 0.05 # Significance level
+
+# Generate sample data under H0
+set.seed(123)
+sample_data_H0 <- rnorm(n, mean = mu0, sd = sigma)
+
+# Generate sample data under H1
+sample_data_H1 <- rnorm(n, mean = mu1, sd = sigma)
+
+# Likelihood ratio test
+likelihood_ratio <- function(data, mu0, mu1, sigma) {
+  exp(sum(dnorm(data, mean = mu1, sd = sigma, log = TRUE)) -
+        sum(dnorm(data, mean = mu0, sd = sigma, log = TRUE)))
+}
+
+# Critical region
+critical_value <- qnorm(1 - alpha, mean = mu0, sd = sigma / sqrt(n))
+
+# Decision
+decision_H0 <- mean(sample_data_H0) > critical_value
+decision_H1 <- mean(sample_data_H1) > critical_value
+
+# Output
+print(paste("Critical Value:", critical_value))
+print(paste("Decision under H0:", decision_H0))
+print(paste("Decision under H1:", decision_H1))
+
+# Graphical Output
+par(mfrow = c(1, 2))
+
+# Density plot under H0
+plot(density(sample_data_H0), col = "blue", lwd = 2, main = "Density under H0", xlab = "Value")
+abline(v = critical_value, col = "red", lty = 2)
+
+# Density plot under H1
+plot(density(sample_data_H1), col = "green", lwd = 2, main = "Density under H1", xlab = "Value")
+abline(v = critical_value, col = "red", lty = 2)
+
+Explanation of the Code
+    1. Parameters:
+        ◦ mu0: Mean under the null hypothesis (H0​).
+        ◦ mu1: Mean under the alternative hypothesis (H1​).
+        ◦ sigma: Population standard deviation.
+        ◦ n: Sample size.
+        ◦ alpha: Significance level.
+    2. Data Generation:
+        ◦ sample_data_H0: Simulated data under H0​ (mean = μ0​).
+        ◦ sample_data_H1: Simulated data under H1​ (mean = μ1​).
+    3. Likelihood Ratio Test:
+        ◦ The likelihood_ratio function computes the likelihood ratio for the given data.
+    4. Critical Region:
+        ◦ critical_value: Computed as μ0​+z1−α​⋅n​σ​, where z1−α​ is the (1−α)-quantile of the standard normal distribution.
+    5. Decision:
+        ◦ decision_H0: Checks if the sample mean under H0​ falls in the critical region.
+        ◦ decision_H1: Checks if the sample mean under H1​ falls in the critical region.
+    6. Graphical Output:
+        ◦ Density plots of the data under H0​ and H1​, with the critical value marked as a red dashed line.
+
+Output Interpretation
+    1. Critical Value:
+        ◦ The critical value is computed as 5.60061562351701.
+    2. Decision under H0​:
+        ◦ FALSE: The sample mean under H0​ does not fall in the critical region, so we fail to reject H0​.
+    3. Decision under H1​:
+        ◦ TRUE: The sample mean under H1​ falls in the critical region, so we reject H0​ in favor of H1​.
+    4. Graphical Output:
+        ◦ The density plots show the distributions of the data under H0​ and H1​, with the critical value marked. The plot under H1​ shows that the sample mean is more likely to exceed the critical value, leading to the rejection of H0​.
+
+
+
+Code Explanation
+1. Parameters
+R
+Copy
+mu0 <- 5 # Null hypothesis mean
+mu1 <- 6 # Alternative hypothesis mean
+sigma <- 2 # Population standard deviation
+n <- 30 # Sample size
+alpha <- 0.05 # Significance level
+    • Purpose: Define the parameters for the hypothesis test.
+        ◦ mu0: The mean under the null hypothesis (H0​).
+        ◦ mu1: The mean under the alternative hypothesis (H1​).
+        ◦ sigma: The population standard deviation (assumed known).
+        ◦ n: The sample size.
+        ◦ alpha: The significance level (probability of Type I error).
+
+2. Generate Sample Data under H0​
+R
+Copy
+set.seed(123)
+sample_data_H0 <- rnorm(n, mean = mu0, sd = sigma)
+    • Purpose: Simulate data under the null hypothesis (H0​).
+        ◦ set.seed(123): Ensures reproducibility by fixing the random number generator seed.
+        ◦ rnorm(n, mean = mu0, sd = sigma): Generates n=30 random samples from a normal distribution with mean μ0​=5 and standard deviation σ=2.
+
+3. Generate Sample Data under H1​
+R
+Copy
+sample_data_H1 <- rnorm(n, mean = mu1, sd = sigma)
+    • Purpose: Simulate data under the alternative hypothesis (H1​).
+        ◦ rnorm(n, mean = mu1, sd = sigma): Generates n=30 random samples from a normal distribution with mean μ1​=6 and standard deviation σ=2.
+
+4. Likelihood Ratio Test
+R
+Copy
+likelihood_ratio <- function(data, mu0, mu1, sigma) {
+  exp(sum(dnorm(data, mean = mu1, sd = sigma, log = TRUE)) -
+      sum(dnorm(data, mean = mu0, sd = sigma, log = TRUE)))
+}
+    • Purpose: Define a function to compute the likelihood ratio.
+        ◦ dnorm(data, mean = mu1, sd = sigma, log = TRUE): Computes the log-likelihood of the data under H1​.
+        ◦ dnorm(data, mean = mu0, sd = sigma, log = TRUE): Computes the log-likelihood of the data under H0​.
+        ◦ The likelihood ratio is computed as:
+          Λ(x)=exp(log-likelihood under H1​−log-likelihood under H0​)
+
+5. Critical Region
+R
+Copy
+critical_value <- qnorm(1 - alpha, mean = mu0, sd = sigma / sqrt(n))
+    • Purpose: Compute the critical value for the test.
+        ◦ qnorm(1 - alpha, mean = mu0, sd = sigma / sqrt(n)): Computes the (1−α)-quantile of the normal distribution with mean μ0​ and standard deviation σ/n​.
+        ◦ This is the threshold for the critical region. If the sample mean exceeds this value, we reject H0​.
+
+6. Decision under H0​
+R
+Copy
+decision_H0 <- mean(sample_data_H0) > critical_value
+    • Purpose: Decide whether to reject H0​ based on the data generated under H0​.
+        ◦ mean(sample_data_H0): Computes the sample mean of the data generated under H0​.
+        ◦ mean(sample_data_H0) > critical_value: Checks if the sample mean falls in the critical region.
+        ◦ If TRUE, reject H0​; if FALSE, fail to reject H0​.
+
+7. Decision under H1​
+R
+Copy
+decision_H1 <- mean(sample_data_H1) > critical_value
+    • Purpose: Decide whether to reject H0​ based on the data generated under H1​.
+        ◦ mean(sample_data_H1): Computes the sample mean of the data generated under H1​.
+        ◦ mean(sample_data_H1) > critical_value: Checks if the sample mean falls in the critical region.
+        ◦ If TRUE, reject H0​; if FALSE, fail to reject H0​.
+
+8. Output
+R
+Copy
+print(paste("Critical Value:", critical_value))
+print(paste("Decision under H0:", decision_H0))
+print(paste("Decision under H1:", decision_H1))
+    • Purpose: Display the results.
+        ◦ print(paste("Critical Value:", critical_value)): Prints the computed critical value.
+        ◦ print(paste("Decision under H0:", decision_H0)): Prints the decision for the data generated under H0​.
+        ◦ print(paste("Decision under H1:", decision_H1)): Prints the decision for the data generated under H1​.
+
+9. Graphical Output
+R
+Copy
+par(mfrow = c(1, 2))
+    • Purpose: Set up a 1x2 grid for plotting.
+
+10. Density Plot under H0​
+R
+Copy
+plot(density(sample_data_H0), col = "blue", lwd = 2, main = "Density under H0", xlab = "Value")
+abline(v = critical_value, col = "red", lty = 2)
+    • Purpose: Visualize the distribution of the data generated under H0​.
+        ◦ plot(density(sample_data_H0), ...): Plots the kernel density estimate of the data.
+        ◦ abline(v = critical_value, ...): Adds a vertical red dashed line at the critical value.
+
+11. Density Plot under H1​
+R
+Copy
+plot(density(sample_data_H1), col = "green", lwd = 2, main = "Density under H1", xlab = "Value")
+abline(v = critical_value, col = "red", lty = 2)
+    • Purpose: Visualize the distribution of the data generated under H1​.
+        ◦ plot(density(sample_data_H1), ...): Plots the kernel density estimate of the data.
+        ◦ abline(v = critical_value, ...): Adds a vertical red dashed line at the critical value.
+
+Output Interpretation
+    1. Critical Value:
+        ◦ The critical value is computed as 5.60061562351701. This is the threshold for rejecting H0​.
+    2. Decision under H0​:
+        ◦ FALSE: The sample mean under H0​ does not exceed the critical value, so we fail to reject H0​.
+    3. Decision under H1​:
+        ◦ TRUE: The sample mean under H1​ exceeds the critical value, so we reject H0​ in favor of H1​.
+    4. Graphical Output:
+        ◦ The density plots show the distributions of the data under H0​ and H1​, with the critical value marked as a red dashed line. The plot under H1​ shows that the sample mean is more likely to exceed the critical value, leading to the rejection of H0​.
+
+Conclusion
+The code demonstrates how to:
+    1. Simulate data under H0​ and H1​.
+    2. Compute the critical region using the Neyman-Pearson Lemma.
+    3. Make decisions based on the critical region.
+    4. Visualize the results using density plots.
+This approach ensures that the test has the highest power (probability of correctly rejecting H0​) for a given significance level α.
+Rplots.pdf
+PDF 10.73KB
+The file Rplots.pdf contains graphical outputs related to the hypothesis testing problem discussed earlier. Specifically, it includes two density plots:
+    1. Density under H0​: A plot of the kernel density estimate of the data generated under the null hypothesis (H0​).
+    2. Density under H1​: A plot of the kernel density estimate of the data generated under the alternative hypothesis (H1​).
+Let’s break down the content and its significance.
+
+1. Density under H0​
+What it shows:
+    • The plot displays the distribution of the data generated under the null hypothesis (H0​), where the true mean is μ0​=5.
+    • The x-axis represents the values of the data, and the y-axis represents the density (probability density function).
+Key Features:
+    • The density curve is centered around μ0​=5, as expected.
+    • A red dashed vertical line is added at the critical value (5.60061562351701), which is the threshold for rejecting H0​.
+Interpretation:
+    • Most of the data under H0​ falls below the critical value, meaning the sample mean is unlikely to exceed this threshold.
+    • This aligns with the decision under H0​: Fail to reject H0​ (since the sample mean does not exceed the critical value).
+
+2. Density under H1​
+What it shows:
+    • The plot displays the distribution of the data generated under the alternative hypothesis (H1​), where the true mean is μ1​=6.
+    • The x-axis represents the values of the data, and the y-axis represents the density (probability density function).
+Key Features:
+    • The density curve is centered around μ1​=6, as expected.
+    • A red dashed vertical line is added at the critical value (5.60061562351701), which is the threshold for rejecting H0​.
+Interpretation:
+    • A significant portion of the data under H1​ falls above the critical value, meaning the sample mean is likely to exceed this threshold.
+    • This aligns with the decision under H1​: Reject H0​ (since the sample mean exceeds the critical value).
+
+How the Plots Verify the Hypothesis Test
+    1. Critical Value:
+        ◦ The red dashed line at 5.60061562351701 represents the threshold for rejecting H0​.
+        ◦ This value is computed based on the significance level (α=0.05) and the distribution of the sample mean under H0​.
+    2. Density under H0​:
+        ◦ The plot shows that the data under H0​ is centered around μ0​=5.
+        ◦ Most of the data falls below the critical value, confirming that the probability of incorrectly rejecting H0​ (Type I error) is controlled at α=0.05.
+    3. Density under H1​:
+        ◦ The plot shows that the data under H1​ is centered around μ1​=6.
+        ◦ A significant portion of the data falls above the critical value, demonstrating the power of the test (probability of correctly rejecting H0​).
+
+Conclusion
+The Rplots.pdf file provides visual confirmation of the hypothesis testing results:
+    1. Under H0​, the sample mean is unlikely to exceed the critical value, so we fail to reject H0​.
+    2. Under H1​, the sample mean is likely to exceed the critical value, so we reject H0​.
+    3. The critical value effectively separates the distributions under H0​ and H1​, ensuring that the test controls the Type I error rate while maximizing power.
+
+
+
+Perform Hypothesis Testing Step-by-Step Using Real or Simulated Data
+
+Code Explanation
+1. Parameters
+R
+Copy
+mu0 <- 5 # Null hypothesis mean
+mu1 <- 6 # True population mean
+sigma <- 2 # Population standard deviation
+n <- 30 # Sample size
+alpha <- 0.05 # Significance level
+    • Purpose: Define the parameters for the hypothesis test.
+        ◦ mu0: The mean under the null hypothesis (H0​).
+        ◦ mu1: The true population mean (used to generate the sample data).
+        ◦ sigma: The population standard deviation.
+        ◦ n: The sample size.
+        ◦ alpha: The significance level (probability of Type I error).
+
+2. Generate Sample Data
+R
+Copy
+set.seed(123)
+sample_data <- rnorm(n, mean = mu1, sd = sigma)
+    • Purpose: Simulate sample data from a normal distribution with mean μ1​=6 and standard deviation σ=2.
+        ◦ set.seed(123): Ensures reproducibility by fixing the random number generator seed.
+        ◦ rnorm(n, mean = mu1, sd = sigma): Generates n=30 random samples from the specified normal distribution.
+
+3. Step 1: State Hypotheses
+R
+Copy
+print("H0: mu = 5")
+print("H1: mu > 5")
+    • Purpose: State the null and alternative hypotheses.
+        ◦ H0​: μ=5 (null hypothesis).
+        ◦ H1​: μ>5 (alternative hypothesis, one-tailed test).
+
+4. Step 2: Choose Significance Level
+R
+Copy
+print(paste("Significance level (alpha):", alpha))
+    • Purpose: Specify the significance level (α=0.05).
+        ◦ This is the probability of rejecting H0​ when it is true (Type I error).
+
+5. Step 3: Calculate Test Statistic
+R
+Copy
+t_stat <- (mean(sample_data) - mu0) / (sd(sample_data) / sqrt(n))
+print(paste("Test Statistic (t):", t_stat))
+    • Purpose: Compute the test statistic for the one-sample t-test.
+        ◦ mean(sample_data): Sample mean.
+        ◦ sd(sample_data): Sample standard deviation.
+        ◦ The test statistic is calculated as:
+          t=s/n​xˉ−μ0​​
+        ◦ Here, xˉ is the sample mean, μ0​ is the null hypothesis mean, s is the sample standard deviation, and n is the sample size.
+
+6. Step 4: Determine Critical Value or p-value
+R
+Copy
+critical_value <- qt(1 - alpha, df = n-1)
+p_value <- pt(t_stat, df = n-1, lower.tail = FALSE)
+print(paste("Critical Value:", critical_value))
+print(paste("P-value:", p_value))
+    • Purpose: Compute the critical value and p-value for the test.
+        ◦ qt(1 - alpha, df = n-1): Computes the critical value for a one-tailed t-test with α=0.05 and df=n−1=29.
+        ◦ pt(t_stat, df = n-1, lower.tail = FALSE): Computes the p-value for the test statistic (probability of observing a value as extreme as tstat​ under H0​).
+
+7. Step 5: Make a Decision
+R
+Copy
+if (t_stat > critical_value) {
+  decision <- "Reject H0"
+} else {
+  decision <- "Fail to reject H0"
+}
+print(paste("Decision:", decision))
+    • Purpose: Compare the test statistic to the critical value and make a decision.
+        ◦ If tstat​>critical value, reject H0​.
+        ◦ Otherwise, fail to reject H0​.
+
+8. Graphical Output
+R
+Copy
+par(mfrow = c(1, 2))
+    • Purpose: Set up a 1x2 grid for plotting.
+
+9. Histogram with Critical Region
+R
+Copy
+hist(sample_data, breaks = 30, col = "lightblue", main = "Sample Data", xlab = "Value", border = "white")
+abline(v = mu0, col = "red", lwd = 2)
+abline(v = mean(sample_data), col = "blue", lwd = 2)
+    • Purpose: Visualize the sample data and compare it to the null hypothesis mean.
+        ◦ hist(sample_data, ...): Plots a histogram of the sample data.
+        ◦ abline(v = mu0, ...): Adds a vertical red line at the null hypothesis mean (μ0​=5).
+        ◦ abline(v = mean(sample_data), ...): Adds a vertical blue line at the sample mean.
+
+10. Density Plot with Critical Region
+R
+Copy
+plot(density(sample_data), col = "blue", lwd = 2, main = "Density Plot", xlab = "Value")
+abline(v = critical_value, col = "red", lty = 2)
+    • Purpose: Visualize the density of the sample data and the critical value.
+        ◦ plot(density(sample_data), ...): Plots the kernel density estimate of the sample data.
+        ◦ abline(v = critical_value, ...): Adds a vertical red dashed line at the critical value.
+
+Output Interpretation
+    1. Hypotheses:
+        ◦ H0​: μ=5.
+        ◦ H1​: μ>5.
+    2. Significance Level:
+        ◦ α=0.05.
+    3. Test Statistic:
+        ◦ tstat​=2.52858027419059.
+    4. Critical Value:
+        ◦ 1.6991270265335.
+    5. P-value:
+        ◦ 0.00857566021520242.
+    6. Decision:
+        ◦ Reject H0​: Since tstat​>critical value and the p-value is less than α, we reject the null hypothesis.
+
+Graphical Output
+    1. Histogram of Sample Data:
+        ◦ The histogram shows the distribution of the sample data.
+        ◦ The red line represents the null hypothesis mean (μ0​=5).
+        ◦ The blue line represents the sample mean.
+    2. Density Plot:
+        ◦ The density plot shows the kernel density estimate of the sample data.
+        ◦ The red dashed line represents the critical value for the test.
+
+Conclusion
+The code performs a one-tailed t-test to compare the sample mean to the null hypothesis mean. The results show that:
+    1. The test statistic exceeds the critical value.
+    2. The p-value is less than the significance level (α=0.05).
+    3. We reject H0​ in favor of H1​, concluding that the true population mean is greater than 5.
+
+Compare the Power of Different Tests for the Same Hypothesis
+
+Theory Behind the Problem
+Power of a Statistical Test
+The power of a statistical test is the probability of correctly rejecting the null hypothesis (H0​) when the alternative hypothesis (H1​) is true. It is defined as:
+Power=1−β
+where β is the probability of a Type II error (failing to reject H0​ when H1​ is true).
+Factors Affecting Power
+    1. Effect Size: The difference between the true parameter value (under H1​) and the null hypothesis value (under H0​). Larger effect sizes increase power.
+    2. Sample Size (n): Larger sample sizes increase power by reducing the standard error of the estimate.
+    3. Significance Level (α): Higher α increases power but also increases the risk of Type I errors.
+    4. Test Type: Different tests (e.g., t-test vs. z-test) may have different power characteristics depending on the assumptions and sample size.
+Objective of the Lab
+The goal of this lab is to:
+    1. Compare the power of the t-test and z-test for the same hypothesis.
+    2. Investigate how sample size affects the power of the t-test.
+
+Explanation of the Code
+1. Parameters
+R
+Copy
+mu0 <- 5  # Null hypothesis mean
+mu1 <- 6  # Alternative hypothesis mean
+sigma <- 2  # Population standard deviation
+n <- 30  # Sample size
+alpha <- 0.05  # Significance level
+N_sim <- 1000  # Number of simulations
+    • Purpose: Define the parameters for the hypothesis test and simulation.
+        ◦ mu0: The mean under the null hypothesis (H0​).
+        ◦ mu1: The mean under the alternative hypothesis (H1​).
+        ◦ sigma: The population standard deviation.
+        ◦ n: The sample size.
+        ◦ alpha: The significance level (probability of Type I error).
+        ◦ N_sim: The number of simulations to run.
+
+2. Initialize Power Counters
+R
+Copy
+power_t_test <- 0
+power_z_test <- 0
+    • Purpose: Initialize counters to keep track of the number of times each test correctly rejects H0​.
+
+3. Simulation
+R
+Copy
+set.seed(123)
+for (i in 1:N_sim) {
+  # Simulate data under H1
+  data <- rnorm(n, mean = mu1, sd = sigma)
+
+  # Perform t-test
+  t_test <- t.test(data, mu = mu0, alternative = "greater")
+  if (t_test$p.value < alpha) {
+    power_t_test <- power_t_test + 1
+  }
+
+  # Perform z-test
+  z_stat <- (mean(data) - mu0) / (sigma / sqrt(n))
+  z_critical <- qnorm(1 - alpha)
+  if (z_stat > z_critical) {
+    power_z_test <- power_z_test + 1
+  }
+}
+    • Purpose: Simulate data and perform the t-test and z-test for each simulation.
+        ◦ set.seed(123): Ensures reproducibility by fixing the random number generator seed.
+        ◦ rnorm(n, mean = mu1, sd = sigma): Generates n=30 random samples from a normal distribution with mean μ1​=6 and standard deviation σ=2.
+        ◦ t-test:
+            ▪ t.test(data, mu = mu0, alternative = "greater"): Performs a one-tailed t-test comparing the sample mean to μ0​=5.
+            ▪ If the p-value is less than α=0.05, increment the t-test power counter.
+        ◦ z-test:
+            ▪ z_stat <- (mean(data) - mu0) / (sigma / sqrt(n)): Computes the z-statistic.
+            ▪ z_critical <- qnorm(1 - alpha): Computes the critical value for the z-test.
+            ▪ If the z-statistic exceeds the critical value, increment the z-test power counter.
+
+4. Output Power Estimates
+R
+Copy
+print(paste("Power of t-test:", power_t_test / N_sim))
+print(paste("Power of z-test:", power_z_test / N_sim))
+    • Purpose: Compute and display the power of the t-test and z-test.
+        ◦ power_t_test / N_sim: The proportion of simulations where the t-test correctly rejected H0​.
+        ◦ power_z_test / N_sim: The proportion of simulations where the z-test correctly rejected H0​.
+
+5. Graphical Output
+R
+Copy
+par(mfrow = c(1, 2))
+    • Purpose: Set up a 1x2 grid for plotting.
+
+6. Power Comparison Bar Plot
+R
+Copy
+barplot(c(power_t_test / N_sim, power_z_test / N_sim),
+        names.arg = c("t-test", "z-test"),
+        col = c("lightblue", "lightgreen"),
+        main = "Power Comparison",
+        ylab = "Power")
+    • Purpose: Visualize the power of the t-test and z-test using a bar plot.
+        ◦ barplot(...): Creates a bar plot comparing the power of the t-test and z-test.
+
+7. Effect of Sample Size on Power
+R
+Copy
+sample_sizes <- seq(10, 100, by = 10)
+power_t <- sapply(sample_sizes, function(n) {
+  sum(replicate(N_sim, t.test(rnorm(n, mean = mu1, sd = sigma), mu = mu0, alternative = "greater")$p.value < alpha)) / N_sim
+})
+    • Purpose: Investigate how the power of the t-test changes with sample size.
+        ◦ sample_sizes <- seq(10, 100, by = 10): Defines a sequence of sample sizes from 10 to 100.
+        ◦ sapply(...): Computes the power of the t-test for each sample size.
+
+8. Power vs. Sample Size Plot
+R
+Copy
+plot(sample_sizes, power_t, type = "b", col = "blue",
+     main = "Power vs. Sample Size",
+     xlab = "Sample Size",
+     ylab = "Power",
+     pch = 16, lwd = 2)
+    • Purpose: Visualize the relationship between sample size and power.
+        ◦ plot(...): Creates a line plot showing how power increases with sample size.
+
+Output Interpretation
+    1. Power of t-test: 0.844.
+    2. Power of z-test: 0.854.
+Key Observations:
+    • The z-test has slightly higher power than the t-test for this scenario. This is because the z-test assumes the population standard deviation is known, while the t-test estimates it from the sample, introducing additional variability.
+    • As the sample size increases, the power of the t-test increases, approaching the power of the z-test.
+
+Conclusion
+The lab demonstrates:
+    1. The power of the t-test and z-test for the same hypothesis.
+    2. The effect of sample size on the power of the t-test.
+    3. The z-test has slightly higher power than the t-test for small sample sizes, but the difference diminishes as the sample size increases.
+
+Apply Bartlett's Test to Compare Variances Across Multiple Groups
+
+Theory Behind the Problem
+Bartlett's Test
+Bartlett's test is a statistical test used to assess whether the variances of multiple groups are equal (homogeneity of variances). It is particularly useful when comparing more than two groups. The test is sensitive to departures from normality, so it is recommended to use it only when the data is approximately normally distributed.
+Hypotheses
+    • Null Hypothesis (H0​): The variances of all groups are equal.
+    • Alternative Hypothesis (H1​): At least one group has a different variance.
+Test Statistic
+The test statistic for Bartlett's test is:
+K2=1+3(k−1)1​(∑i=1k​ni​−11​−N−k1​)(N−k)ln(sp2​)−∑i=1k​(ni​−1)ln(si2​)​
+where:
+    • N: Total number of observations.
+    • k: Number of groups.
+    • sp2​: Pooled variance.
+    • si2​: Variance of the i-th group.
+    • ni​: Number of observations in the i-th group.
+The test statistic follows a chi-squared distribution with k−1 degrees of freedom.
+Objective of the Lab
+The goal of this lab is to:
+    1. Generate sample data for three groups with different variances.
+    2. Apply Bartlett's test to compare the variances of the groups.
+    3. Visualize the data using boxplots and density plots.
+
+Explanation of the Code
+1. Generate Sample Data
+R
+Copy
+set.seed(123)
+group1 <- rnorm(30, mean = 5, sd = 2)
+group2 <- rnorm(30, mean = 5, sd = 3)
+group3 <- rnorm(30, mean = 5, sd = 4)
+    • Purpose: Simulate data for three groups with the same mean but different standard deviations.
+        ◦ set.seed(123): Ensures reproducibility by fixing the random number generator seed.
+        ◦ rnorm(30, mean = 5, sd = 2): Generates 30 random samples from a normal distribution with mean 5 and standard deviation 2 (Group 1).
+        ◦ rnorm(30, mean = 5, sd = 3): Generates 30 random samples from a normal distribution with mean 5 and standard deviation 3 (Group 2).
+        ◦ rnorm(30, mean = 5, sd = 4): Generates 30 random samples from a normal distribution with mean 5 and standard deviation 4 (Group 3).
+
+2. Combine Data into a Data Frame
+R
+Copy
+data <- data.frame(
+  value = c(group1, group2, group3),
+  group = rep(c("Group 1", "Group 2", "Group 3"), each = 30)
+)
+    • Purpose: Combine the data into a data frame with a grouping factor.
+        ◦ value: Combines the values from all three groups.
+        ◦ group: Creates a grouping variable with labels "Group 1", "Group 2", and "Group 3".
+
+3. Perform Bartlett's Test
+R
+Copy
+bartlett_test_result <- bartlett.test(value ~ group, data = data)
+    • Purpose: Perform Bartlett's test to compare the variances of the three groups.
+        ◦ bartlett.test(value ~ group, data = data): Tests the null hypothesis that the variances of the groups are equal.
+
+4. Output
+R
+Copy
+print(bartlett_test_result)
+    • Purpose: Display the results of Bartlett's test.
+        ◦ The output includes the test statistic (K2), degrees of freedom, and p-value.
+
+5. Graphical Output
+R
+Copy
+par(mfrow = c(1, 2))
+    • Purpose: Set up a 1x2 grid for plotting.
+
+6. Boxplot of Groups
+R
+Copy
+boxplot(group1, group2, group3,
+        col = c("lightblue", "lightgreen", "lightcoral"),
+        main = "Boxplot of Groups",
+        xlab = "Group",
+        ylab = "Value",
+        names = c("Group 1", "Group 2", "Group 3"))
+    • Purpose: Visualize the distribution of the data in each group using boxplots.
+        ◦ boxplot(...): Creates a boxplot for each group.
+        ◦ col: Specifies the colors for the boxplots.
+        ◦ main, xlab, ylab: Add titles and labels to the plot.
+
+7. Density Plots of Groups
+R
+Copy
+plot(density(group1), col = "blue", lwd = 2, main = "Density Plots", xlab = "Value", ylim = c(0, 0.25))
+lines(density(group2), col = "green", lwd = 2)
+lines(density(group3), col = "red", lwd = 2)
+legend("topright", legend = c("Group 1", "Group 2", "Group 3"), col = c("blue", "green", "red"), lwd = 2)
+    • Purpose: Visualize the density of the data in each group.
+        ◦ plot(density(group1), ...): Plots the kernel density estimate for Group 1.
+        ◦ lines(density(group2), ...): Adds the density plot for Group 2.
+        ◦ lines(density(group3), ...): Adds the density plot for Group 3.
+        ◦ legend(...): Adds a legend to distinguish the groups.
+
+Output Interpretation
+Bartlett's Test Result
+Copy
+Bartlett test of homogeneity of variances
+
+data:  value by group
+Bartlett's K-squared = 9.4313, df = 2, p-value = 0.008954
+    • Test Statistic (K2): 9.4313.
+    • Degrees of Freedom: 2.
+    • p-value: 0.008954.
+Conclusion:
+    • The p-value (0.008954) is less than the significance level (α=0.05), so we reject the null hypothesis.
+    • This indicates that at least one group has a significantly different variance.
+
+Graphical Output
+    1. Boxplot of Groups:
+        ◦ The boxplots show the spread of the data in each group. The boxes for Group 2 and Group 3 are wider, indicating higher variance compared to Group 1.
+    2. Density Plots:
+        ◦ The density plots show the distribution of the data in each group. The spread of the curves increases from Group 1 to Group 3, confirming the differences in variance.
+
+Conclusion
+The lab demonstrates:
+    1. How to use Bartlett's test to compare the variances of multiple groups.
+    2. The test correctly identifies that the variances of the groups are not equal.
+    3. The graphical outputs (boxplots and density plots) provide visual confirmation of the differences in variance.
+
+
+Perform Fisher's Exact Test on 2×2 Contingency Tables
+
+Theory Behind the Problem
+Fisher's Exact Test
+Fisher's exact test is a statistical significance test used to determine if there are nonrandom associations between two categorical variables in a 2×2 contingency table. It is particularly useful when the sample size is small, and the chi-squared test is not appropriate.
+Hypotheses
+    • Null Hypothesis (H0​): There is no association between the two categorical variables (i.e., the odds ratio is 1).
+    • Alternative Hypothesis (H1​): There is an association between the two categorical variables (i.e., the odds ratio is not equal to 1).
+Test Statistic
+The test calculates the exact probability of observing the data (or more extreme data) under the null hypothesis. The p-value is computed using the hypergeometric distribution.
+Objective of the Lab
+The goal of this lab is to:
+    1. Create a 2×2 contingency table.
+    2. Perform Fisher's exact test to assess the association between the two categorical variables.
+    3. Visualize the data using a bar plot and a mosaic plot.
+
+Explanation of the Code
+1. Create a 2×2 Contingency Table
+R
+Copy
+data <- matrix(c(10, 5, 2, 8), nrow = 2, byrow = TRUE)
+rownames(data) <- c("Group A", "Group B")
+colnames(data) <- c("Success", "Failure")
+    • Purpose: Define a 2×2 contingency table.
+        ◦ matrix(c(10, 5, 2, 8), nrow = 2, byrow = TRUE): Creates a 2×2 matrix with the specified values.
+        ◦ rownames(data) <- c("Group A", "Group B"): Assigns row names to the matrix.
+        ◦ colnames(data) <- c("Success", "Failure"): Assigns column names to the matrix.
+
+2. Perform Fisher's Exact Test
+R
+Copy
+fisher_test_result <- fisher.test(data)
+    • Purpose: Perform Fisher's exact test on the contingency table.
+        ◦ fisher.test(data): Computes the p-value and other statistics for Fisher's exact test.
+
+3. Output
+R
+Copy
+print("Contingency Table:")
+print(data)
+print("Fisher's Exact Test Result:")
+print(fisher_test_result)
+    • Purpose: Display the contingency table and the results of Fisher's exact test.
+        ◦ print(data): Prints the 2×2 contingency table.
+        ◦ print(fisher_test_result): Prints the results of Fisher's exact test, including the p-value and odds ratio.
+
+4. Graphical Output
+R
+Copy
+par(mfrow = c(1, 2))
+    • Purpose: Set up a 1x2 grid for plotting.
+
+5. Barplot of the Contingency Table
+R
+Copy
+barplot(data, beside = TRUE, col = c("lightblue", "lightgreen"),
+        main = "2x2 Contingency Table",
+        xlab = "Outcome",
+        ylab = "Count",
+        legend = rownames(data))
+    • Purpose: Visualize the contingency table using a bar plot.
+        ◦ barplot(data, beside = TRUE, ...): Creates a bar plot with bars for each group side by side.
+        ◦ col = c("lightblue", "lightgreen"): Specifies the colors for the bars.
+        ◦ main, xlab, ylab: Add titles and labels to the plot.
+        ◦ legend = rownames(data): Adds a legend to distinguish the groups.
+
+6. Mosaic Plot
+R
+Copy
+mosaicplot(data, main = "Mosaic Plot", color = TRUE, shade = TRUE)
+    • Purpose: Visualize the contingency table using a mosaic plot.
+        ◦ mosaicplot(data, ...): Creates a mosaic plot, which shows the proportions of the data in each cell of the contingency table.
+        ◦ color = TRUE: Adds color to the plot.
+        ◦ shade = TRUE: Adds shading to highlight deviations from independence.
+
+Output Interpretation
+Contingency Table
+Copy
+        Success Failure
+Group A      10       5
+Group B       2       8
+    • Group A: 10 successes and 5 failures.
+    • Group B: 2 successes and 8 failures.
+Fisher's Exact Test Result
+Copy
+Fisher's Exact Test for Count Data
+
+data:  data
+p-value = 0.04141
+alternative hypothesis: true odds ratio is not equal to 1
+95 percent confidence interval:
+  0.9540368 96.2686947
+sample estimates:
+odds ratio
+  7.281573
+    • p-value: 0.04141.
+    • Odds Ratio: 7.281573.
+Conclusion:
+    • The p-value (0.04141) is less than the significance level (α=0.05), so we reject the null hypothesis.
+    • This indicates that there is a significant association between the groups and the outcomes.
+
+Graphical Output
+    1. Barplot of the Contingency Table:
+        ◦ The bar plot shows the counts of successes and failures for each group. Group A has more successes, while Group B has more failures.
+    2. Mosaic Plot:
+        ◦ The mosaic plot visualizes the proportions of successes and failures in each group. The shading highlights the deviation from independence, confirming the association between the groups and the outcomes.
+
+Conclusion
+The lab demonstrates:
+    1. How to use Fisher's exact test to assess the association between two categorical variables in a 2×2 contingency table.
+    2. The test correctly identifies a significant association between the groups and the outcomes.
+    3. The graphical outputs (bar plot and mosaic plot) provide visual confirmation of the results.
+
+
+Conduct Non-Parametric Tests
+Theory Behind the Problem
+Non-Parametric Tests
+Non-parametric tests are statistical methods that do not rely on assumptions about the underlying distribution of the data (e.g., normality). They are particularly useful when:
+    1. The data does not meet the assumptions of parametric tests (e.g., normality, homogeneity of variance).
+    2. The sample size is small.
+    3. The data is ordinal or ranked.
+Wilcoxon Rank-Sum Test
+The Wilcoxon rank-sum test (also known as the Mann-Whitney U test) is a non-parametric test used to compare two independent groups. It tests whether the distributions of the two groups are the same, focusing on differences in medians.
+Hypotheses
+    • Null Hypothesis (H0​): The distributions of the two groups are the same (no location shift).
+    • Alternative Hypothesis (H1​): The distributions of the two groups are different (there is a location shift).
+Objective of the Lab
+The goal of this lab is to:
+    1. Generate sample data for two groups.
+    2. Perform the Wilcoxon rank-sum test to compare the two groups.
+    3. Visualize the data using boxplots and density plots.
+
+Explanation of the Code
+1. Generate Sample Data
+R
+Copy
+set.seed(123)
+group1 <- rnorm(20, mean = 5, sd = 2)
+group2 <- rnorm(20, mean = 7, sd = 2)
+    • Purpose: Simulate data for two groups with different means but the same standard deviation.
+        ◦ set.seed(123): Ensures reproducibility by fixing the random number generator seed.
+        ◦ rnorm(20, mean = 5, sd = 2): Generates 20 random samples from a normal distribution with mean 5 and standard deviation 2 (Group 1).
+        ◦ rnorm(20, mean = 7, sd = 2): Generates 20 random samples from a normal distribution with mean 7 and standard deviation 2 (Group 2).
+
+2. Perform Wilcoxon Rank-Sum Test
+R
+Copy
+wilcox_test_result <- wilcox.test(group1, group2)
+    • Purpose: Perform the Wilcoxon rank-sum test to compare the two groups.
+        ◦ wilcox.test(group1, group2): Computes the test statistic and p-value for the Wilcoxon rank-sum test.
+
+3. Output
+R
+Copy
+print(wilcox_test_result)
+    • Purpose: Display the results of the Wilcoxon rank-sum test.
+        ◦ The output includes the test statistic (W) and the p-value.
+
+4. Graphical Output
+R
+Copy
+par(mfrow = c(1, 2))
+    • Purpose: Set up a 1x2 grid for plotting.
+
+5. Boxplot of Groups
+R
+Copy
+boxplot(group1, group2,
+        col = c("lightblue", "lightgreen"),
+        names = c("Group 1", "Group 2"),
+        main = "Boxplot of Groups",
+        xlab = "Group",
+        ylab = "Value")
+    • Purpose: Visualize the distribution of the data in each group using boxplots.
+        ◦ boxplot(...): Creates a boxplot for each group.
+        ◦ col = c("lightblue", "lightgreen"): Specifies the colors for the boxplots.
+        ◦ names = c("Group 1", "Group 2"): Labels the groups.
+        ◦ main, xlab, ylab: Add titles and labels to the plot.
+
+6. Density Plots of Groups
+R
+Copy
+plot(density(group1), col = "blue", lwd = 2,
+     main = "Density Plots", xlab = "Value", ylim = c(0, 0.25))
+lines(density(group2), col = "green", lwd = 2)
+legend("topright", legend = c("Group 1", "Group 2"), col = c("blue", "green"), lwd = 2)
+    • Purpose: Visualize the density of the data in each group.
+        ◦ plot(density(group1), ...): Plots the kernel density estimate for Group 1.
+        ◦ lines(density(group2), ...): Adds the density plot for Group 2.
+        ◦ legend(...): Adds a legend to distinguish the groups.
+
+Output Interpretation
+Wilcoxon Rank-Sum Test Result
+Copy
+Wilcoxon rank sum exact test
+
+data:  group1 and group2
+W = 104, p-value = 0.008712
+alternative hypothesis: true location shift is not equal to 0
+    • Test Statistic (W): 104.
+    • p-value: 0.008712.
+Conclusion:
+    • The p-value (0.008712) is less than the significance level (α=0.05), so we reject the null hypothesis.
+    • This indicates that there is a significant difference in the distributions of the two groups.
+
+Graphical Output
+    1. Boxplot of Groups:
+        ◦ The boxplots show the spread of the data in each group. Group 2 has a higher median than Group 1, indicating a location shift.
+    2. Density Plots:
+        ◦ The density plots show the distribution of the data in each group. The curve for Group 2 is shifted to the right compared to Group 1, confirming the difference in location.
+
+Conclusion
+The lab demonstrates:
+    1. How to use the Wilcoxon rank-sum test to compare two independent groups.
+    2. The test correctly identifies a significant difference in the distributions of the two groups.
+    3. The graphical outputs (boxplots and density plots) provide visual confirmation of the results.

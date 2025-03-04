@@ -1,631 +1,623 @@
-Lab Report on Signal Operations in Signal Processing
+Lab 1: Verification of Fisher’s Lemma Using Simulated Data from Normal Distributions
 Theory
+    • Fisher’s Lemma: Fisher's lemma states that for a sample from a normal distribution, the sample mean and sample variance are independent random variables.
+    • Sample Mean: The sample mean (Xˉ) is an unbiased estimator of the population mean (μ).
+    • Sample Variance: The sample variance (S2) is an unbiased estimator of the population variance (σ2).
+Lab 1: Verification of Fisher’s Lemma
+    • Sample Mean:
+      Xˉ=n1​i=1∑n​Xi​
+    • Sample Variance:
+      S2=n−11​i=1∑n​(Xi​−Xˉ)2
+    • Fisher’s Lemma: For a normal distribution, the sample mean (Xˉ) and sample variance (S2) are independent.
 
-Signal processing involves manipulating signals to extract information, enhance features, or analyze behavior. Basic operations like addition, multiplication, scaling, and shifting are fundamental in understanding signal behavior in both time and frequency domains.
-
-1. Signal Addition: Combining two or more signals, often used in overlaying or superimposing information.
-
-   y(t) = x1(t) + x2(t)
-2. Signal Multiplication: Multiplying two signals results in a combined signal with modulated characteristics, often used in amplitude modulation.
-
-   y(t) = x1(t) * x2(t)
-3. Scaling: Modifying the amplitude or duration of a signal.
- - Amplitude Scaling: Changes the signal's magnitude by a constant.
- - Time Scaling: Compresses or expands the signal along the time axis.
-
-     y(t) = k * x(at)
-4. Shifting: In this operation, each sample of x(n) is shifted by an amount k to obtain a shifted sequence y(n).
-
- y(n)={x(n−k)}
-
- If we let m = n−k, then n = m+k and the above operation is given by
-
-y(m+k) = {x(m)}
-
-These operations help in signal transformation, modulation, and system analysis.
-5. Folding: In this operation each sample of x(n)is flipped around n =0 to obtain a folded sequence y(n).
-
- y(n)={x(−n)}
-
-
-Source Code
-
-import numpy as np
-import matplotlib.pyplot as plt
-
+Objective
+Verify Fisher’s lemma by generating samples from a normal distribution and checking the correlation between the sample mean and sample variance.
+Pseudocode
+    1. Generate multiple samples from a normal distribution with known mean (μ) and variance (σ2).
+    2. Compute the sample mean and sample variance for each sample.
+    3. Check the correlation between the sample means and sample variances.
+    4. Plot histograms of the sample means and variances, and a scatterplot of means vs. variances.
+Code
+R
+Copy
 # Parameters
-t = np.arange(-10, 10, 0.01)  # Time vector
-# Define two signals
-x1 = np.sin(2 * np.pi * 1 * t)  # Signal 1: Sine wave
-x2 = np.cos(2 * np.pi * 0.5 * t)  # Signal 2: Cosine wave
-# Signal Addition
-y_add = x1 + x2
-# Signal Multiplication
-y_mult = x1 * x2
-# Amplitude Scaling
-k = 2  # Scaling factor
-y_scaled = k * x1
-# Time Shifting
-shift = 2  # Shift value (in seconds)
-y_shifted = np.sin(2 * np.pi * 1 * (t - shift))  # Delayed signal
-# Signal Folding
-y_folded = np.sin(2 * np.pi * 1 * (-t))  # Folded sine wave
-# Plot Results
-plt.figure(figsize=(12, 15))
-# Original Signals
-plt.subplot(6, 1, 1)
-plt.plot(t, x1, label='x1: Sine Wave', color='b')
-plt.plot(t, x2, label='x2: Cosine Wave', color='r')
-plt.title('Original Signals')
-plt.legend()
-plt.grid()
-# Signal Addition
-plt.subplot(6, 1, 2)
-plt.plot(t, y_add, color='m')
-plt.title('Signal Addition')
-plt.grid()
-# Signal Multiplication
-plt.subplot(6, 1, 3)
-plt.plot(t, y_mult, color='k')
-plt.title('Signal Multiplication')
-plt.grid()
-# Amplitude Scaling
-plt.subplot(6, 1, 4)
-plt.plot(t, y_scaled, color='g')
-plt.title('Amplitude Scaling')
-plt.grid()
-# Time Shifting
-plt.subplot(6, 1, 5)
-plt.plot(t, y_shifted, color='c')
-plt.title('Time Shifting')
-plt.grid()
-# Signal Folding
-plt.subplot(6, 1, 6)
-plt.plot(t, y_folded, label='Folded Signal', color='purple')
-plt.title('Signal Folding')
-plt.legend()
-plt.grid()
+mu <- 5
+sigma <- 2
+n <- 30
+N_sim <- 1000
 
-# Display the plots
-plt.tight_layout()
-plt.show()
-Output
+# Initialize vectors
+sample_means <- numeric(N_sim)
+sample_vars <- numeric(N_sim)
 
+# Simulation
+set.seed(123)
+for (i in 1:N_sim) {
+    data <- rnorm(n, mean = mu, sd = sigma)
+    sample_means[i] <- mean(data)
+    sample_vars[i] <- var(data)
+}
 
+# Check correlation
+correlation <- cor(sample_means, sample_vars)
+print(paste("Correlation between sample mean and sample variance:", correlation))
 
+# Graphical Output
+par(mfrow = c(2, 2))
 
+# Histogram of sample means
+hist(sample_means, breaks = 30, col = "lightblue", main = "Distribution of Sample Means", xlab = "Sample Means")
+curve(dnorm(x, mean = mu, sd = sigma/sqrt(n)), add = TRUE, col = "red", lwd = 2)
 
+# Histogram of sample variances
+hist(sample_vars, breaks = 30, col = "lightgreen", main = "Distribution of Sample Variances", xlab = "Sample Variances")
+curve(dchisq((x * (n-1)) / sigma^2, df = n-1) * (n-1)/sigma^2, add = TRUE, col = "blue", lwd = 2)
 
+# Scatterplot of sample means vs. sample variances
+plot(sample_means, sample_vars, pch = 19, col = rgb(0, 0, 1, 0.5), main = "Sample Mean vs. Sample Variance")
+abline(h = sigma^2, col = "red", lwd = 2)
 
+# Q-Q plot for sample means
+qqnorm(sample_means, main = "Q-Q Plot for Sample Means", col = "blue")
+qqline(sample_means, col = "red", lwd = 2)
+Sample Input/Output
+    • Input: μ=5, σ=2, n=30, Nsim​=1000
+    • Output:
+        ◦ Correlation between sample mean and sample variance: Close to 0 (indicating independence).
+        ◦ Histograms and scatterplots showing the distribution of sample means and variances.
 
-
-
-
-
-
-Lab Report on Signal Sequence
-1. Theory
-Signal sequences are fundamental building blocks in signal processing and system analysis. They are used to represent basic signals that can be combined or manipulated to model more complex systems. In this lab, we focus on three key signal sequences:
-    1. Impulse Signal:
-        ◦ The impulse signal, also known as the Dirac delta function, is a theoretical signal that is zero everywhere except at t=0, where it is infinitely high. In practice, it is approximated as a narrow pulse with unit area.
-        ◦ Mathematically, the impulse signal is defined as:
-
-          δ(t)={∞ if t=0
-                     0 otherwise
-
-
-        ◦ The impulse signal is used to analyze the response of systems (impulse response) and is a key concept in convolution and filtering.
-    2. Step Signal:
-        ◦ The step signal, also known as the unit step function, represents a signal that transitions from 0 to 1 at t=0.
-        ◦ Mathematically, the step signal is defined as:
-
-          u(t)={1 if t≥0
-                     0 otherwise
-
-        ◦ The step signal is used to model systems that switch on at a specific time, such as turning on a device or applying a constant input.
-    3. Ramp Signal:
-        ◦ The ramp signal represents a signal that increases linearly with time for t≥0.
-        ◦ Mathematically, the ramp signal is defined as:
-
-          r(t)={t if t≥0
-                     0 otherwise
-
-        ◦ The ramp signal is used to model systems with linearly increasing inputs, such as velocity or acceleration.
-3. Source Code
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Define the range for continuous-time signals
-t = np.linspace(-10, 10, 1000)  # Smooth time values
-
-# Define continuous-time signals
-def impulse_signal(t):
-    return np.where(np.abs(t) < 0.1, 1, 0)  # Approximate impulse with a narrow pulse
-
-def step_signal(t):
-    return np.where(t >= 0, 1, 0)
-
-def ramp_signal(t):
-    return np.where(t >= 0, t, 0)
-
-# Generate signals
-impulse = impulse_signal(t)
-step = step_signal(t)
-ramp = ramp_signal(t)
-
-# Plot signals
-plt.figure(figsize=(12, 4))
-
-# Impulse Signal
-plt.subplot(1, 3, 1)
-plt.plot(t, impulse, 'r', linewidth=2)
-plt.title("Impulse Signal (Approximate)")
-plt.xlabel("t")
-plt.ylabel("Amplitude")
-plt.grid()
-
-# Step Signal
-plt.subplot(1, 3, 2)
-plt.plot(t, step, 'g', linewidth=2)
-plt.title("Step Signal")
-plt.xlabel("t")
-plt.ylabel("Amplitude")
-plt.grid()
-
-# Ramp Signal
-plt.subplot(1, 3, 3)
-plt.plot(t, ramp, 'b', linewidth=2)
-plt.title("Ramp Signal")
-plt.xlabel("t")
-plt.ylabel("Amplitude")
-plt.grid()
-
-plt.tight_layout()
-plt.show()
-
-4. Output
-After running the code, the following graphs are generated:
-    1. Impulse Signal (Approximate):
-        ◦ A sharp pulse at , approximating the Dirac delta function.
-    2. Step Signal:
-        ◦ A flat signal that remains at 0 for and jumps to 1 at .
-    3. Ramp Signal:
-        ◦ A linearly increasing signal starting from .
-Each graph represents the behavior of its respective signal in continuous time.
-
-
-
-
-Lab Report on Convolution
+Lab 2: Generation and Analysis of χ²-Distributed Data
 Theory
-Convolution is a mathematical operation that combines two signals to produce a third signal, which represents how the shape of one signal is modified by the other. It is a fundamental concept in signal processing, used in applications such as filtering, system analysis, and image processing.
-The convolution of two continuous-time signals x(t) and h(t) is defined as:
+    • Chi-Squared Distribution: The chi-squared distribution with k degrees of freedom is the distribution of a sum of the squares of k independent standard normal random variables.
+    • Mean of χ²: The mean of a chi-squared distribution with k degrees of freedom is k.
+    • Variance of χ²: The variance is 2k.
+Chi-Squared Distribution:
+      X∼χ2(k)
+      where k is the degrees of freedom.
+    • Mean of χ²:
+      E[X]=k
+    • Variance of χ²:
+      Var(X)=2k
 
-y(t)=x(t)∗h(t)=−∞∫∞​x(τ)h(t−τ)dτ
+Objective
+Generate chi-squared distributed data and analyze its properties, including mean and variance.
+Pseudocode
+    1. Generate chi-squared distributed data with k degrees of freedom.
+    2. Compute the mean and variance of the generated data.
+    3. Plot histograms, density plots, and Q-Q plots to visualize the distribution.
+Code
+R
+Copy
+# Parameters
+k <- 5
+N_sim <- 1000
 
-For discrete-time signals, the convolution is given by:
+# Generate chi-squared data
+set.seed(123)
+chi2_data <- rchisq(N_sim, df = k)
 
-y[n]=x[n]∗h[n]=k=−∞∑∞​x[k]h[n−k]
+# Compute mean and variance
+mean_chi2 <- mean(chi2_data)
+var_chi2 <- var(chi2_data)
+print(paste("Mean:", mean_chi2))
+print(paste("Variance:", var_chi2))
 
-Key Points:
-    1. Linear Time-Invariant (LTI) Systems: Convolution is used to describe the output of an LTI system when the input signal and the system's impulse response are known.
-    2. Commutative Property: Convolution is commutative, meaning x(t)∗h(t)=h(t)∗x(t).
-    3. Applications: Convolution is used in filtering (e.g., low-pass, high-pass filters), audio processing, and image blurring or sharpening.
+# Graphical Output
+par(mfrow = c(1, 3))
 
-By performing convolution, we can analyze how a system responds to different inputs, design filters, and understand the interaction between signals and systems.
+# Histogram
+hist(chi2_data, breaks = 30, col = "lightblue", probability = TRUE, main = "Chi-Squared Distribution")
+curve(dchisq(x, df = k), add = TRUE, col = "red", lwd = 2)
 
-Source code
-import numpy as np
-import matplotlib.pyplot as plt
+# Density plot
+plot(density(chi2_data), col = "blue", lwd = 2, main = "Density Plot", xlab = "Value")
+curve(dchisq(x, df = k), add = TRUE, col = "red", lwd = 2)
 
-# Define two real signals: sine and cosine waves
-fs = 1000 # Sampling frequency in Hz
-t = np.linspace(0, 1, fs, endpoint=False) # Time vector (1 second duration)
+# Q-Q plot
+qqplot(qchisq(ppoints(N_sim), df = k), chi2_data, main = "Q-Q Plot for Chi-Squared Data", col = "blue")
+abline(0, 1, col = "red", lwd = 2)
+Sample Input/Output
+    • Input: k=5, Nsim​=1000
+    • Output:
+        ◦ Mean: Close to 5.
+        ◦ Variance: Close to 10.
+        ◦ Histograms and Q-Q plots showing the chi-squared distribution.
 
-# Define the signals
-sine_wave = np.sin(2 * np.pi * 5 * t) # 5 Hz sine wave
-cosine_wave = np.cos(2 * np.pi * 5 * t) # 5 Hz cosine wave
-
-# Perform convolution
-conv_result = np.convolve(sine_wave, cosine_wave, mode='full')
-
-# Display and plot the results
-plt.figure(figsize=(12, 6))
-
-# Original signals
-plt.subplot(3, 1, 1)
-plt.plot(t, sine_wave, label="Sine Wave")
-plt.plot(t, cosine_wave, label="Cosine Wave")
-plt.title("Original Signals")
-plt.legend()
-plt.grid()
-
-# Convolution result
-conv_time = np.linspace(-1, 1, len(conv_result), endpoint=False)
-plt.subplot(3, 1, 2)
-plt.plot(conv_time, conv_result, label="Convolution", color='orange')
-plt.title("Convolution of Sine and Cosine Waves")
-plt.xlabel("Time")
-plt.ylabel("Amplitude")
-plt.grid()
-
-plt.tight_layout()
-plt.show()
-
-
-Output
-
-
-Lab Report on Correlation
-
+Lab 3: Comparison of t-Distribution with Normal Distribution for Small Sample Sizes
 Theory
-Correlation is a measure of similarity between two signals, often used to detect patterns or align signals in time. It is widely used in applications such as radar, sonar, and pattern recognition.
-The cross-correlation of two continuous-time signals x(t) and y(t) is defined as:
-Rxy​(τ)=−∞∫∞​x(t)y(t+τ)dt
-
-For discrete-time signals, the cross-correlation is given by:
-
-Rxy​[m]=n=−∞∑∞​x[n]y[n+m]
-
-Key Points:
-    1. Autocorrelation: When a signal is correlated with itself, it is called autocorrelation. It measures the similarity of a signal with a time-shifted version of itself.
-    2. Applications: Correlation is used in signal detection, time-delay estimation, and pattern matching.
-    3. Peak Detection: The peak of the correlation function indicates the time shift where the signals are most similar.
-
-By using correlation, we can determine the degree of similarity between signals, detect delays, and identify patterns in noisy environments.
-
-Source code
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Define two real signals: sine waves with different frequencies
-fs = 1000 # Sampling frequency in Hz
-t = np.linspace(0, 1, fs, endpoint=False) # Time vector (1 second duration)
-
-# Define the sine waves with different frequencies
-sine_wave1 = np.sin(2 * np.pi * 5 * t) # 5 Hz sine wave
-sine_wave2 = np.sin(2 * np.pi * 5 * t + np.pi / 4) # 5 Hz sine wave with a phase shift of 45 degrees
-
-# Display and plot the results
-plt.figure(figsize=(12, 8))
-
-# Original signals
-plt.subplot(3, 1, 1)
-plt.plot(t, sine_wave1, label="Sine Wave 1 (5 Hz)")
-plt.plot(t, sine_wave2, label="Sine Wave 2 (5 Hz with 45° phase shift)")
-plt.title("Original Signals (Sine Waves with Phase Shift)")
-plt.xlabel("Time (s)")
-plt.ylabel("Amplitude")
-plt.legend()
-plt.grid()
-
-# Perform cross-correlation
-correlation = np.correlate(sine_wave1, sine_wave2, mode='full')
-lags = np.arange(-len(sine_wave1) + 1, len(sine_wave1)) # Compute lag indices
-
-# Cross-correlation
-plt.subplot(3, 1, 2)
-plt.plot(lags, correlation, label="Cross-Correlation", color='green')
-plt.title("Cross-Correlation of Sine Waves")
-plt.xlabel("Lag")
-plt.ylabel("Correlation")
-plt.legend()
-plt.grid()
-
-# Perform auto-correlation
-auto_correlation = np.correlate(sine_wave1, sine_wave1, mode='full')
-
-# Auto-correlation
-plt.subplot(3, 1, 3)
-plt.plot(lags, auto_correlation, label="Auto-Correlation", color='orange')
-plt.title("Auto-Correlation of Sine Wave 1")
-plt.xlabel("Lag")
-plt.ylabel("Correlation")
-plt.legend()
-plt.grid()
-
-plt.tight_layout()
-plt.show()
-
-Output
+    • t-Distribution: The t-distribution is used when the sample size is small, and the population standard deviation is unknown. It has heavier tails than the normal distribution.
+    • Normal Distribution: The normal distribution is symmetric and bell-shaped, with mean μ and variance σ2.
+t-Distribution:
+      T=S/n​Xˉ−μ​
+      where T follows a t-distribution with n−1 degrees of freedom.
+    • Normal Distribution:
+      Z=σ/n​Xˉ−μ​
+      where Z follows a standard normal distribution.
 
 
+Objective
+Compare the t-distribution with the normal distribution for small sample sizes.
+Pseudocode
+    1. Generate data from both t-distribution and normal distribution.
+    2. Plot histograms and density plots to compare the two distributions.
+    3. Generate Q-Q plots to assess normality.
+Code
+R
+Copy
+# Parameters
+n <- 10
+N_sim <- 1000
 
-Feature Extraction of a PPG
-(Photoplethysmogram) Signal
+# Generate data
+set.seed(123)
+t_data <- rt(N_sim, df = n-1)
+normal_data <- rnorm(N_sim)
 
-Photoplethysmography (PPG) is a simple and non-invasive technique used to measure changes in blood volume in the body. It works by shining light onto the skin and detecting variations in the reflected or transmitted light, which correspond to blood flow changes. PPG signals are widely used in heart rate monitoring, oxygen saturation measurement, and cardiovascular health analysis.
-Since the PPG signal contains valuable physiological information, we use feature extraction techniques to analyze it effectively. These techniques help us identify key characteristics such as heart rate, blood circulation patterns, and heart rate variability.
+# Graphical Output
+par(mfrow = c(2, 2))
 
-1. Understanding the PPG Signal
+# Histogram of t-distribution
+hist(t_data, breaks = 30, col = "lightblue", probability = TRUE, main = "t-Distribution", xlab = "Value")
+curve(dt(x, df = n-1), add = TRUE, col = "red", lwd = 2)
 
-The PPG signal consists of repeating waveforms that represent heartbeats. Each cycle of the signal contains:
-    • A Systolic Peak (Highest Point): This corresponds to the maximum blood volume in the arteries when the heart contracts.
-    • A Diastolic Point (Lowest Point): This occurs when the blood volume is at its lowest before the next heartbeat.
-The frequency of these peaks is directly related to heart rate, and their shape provides insights into blood circulation. However, the raw PPG signal can be noisy due to motion artifacts, ambient light, and sensor imperfections.
+# Histogram of normal distribution
+hist(normal_data, breaks = 30, col = "lightgreen", probability = TRUE, main = "Normal Distribution", xlab = "Value")
+curve(dnorm(x), add = TRUE, col = "blue", lwd = 2)
 
-2. Preprocessing the PPG Signal (Filtering)
+# Density plot comparison
+plot(density(t_data), col = "red", lwd = 2, main = "Density Comparison", xlab = "Value", ylim = c(0, 0.4))
+lines(density(normal_data), col = "blue", lwd = 2)
+legend("topright", legend = c("t-Distribution", "Normal Distribution"), col = c("red", "blue"), lwd = 2)
 
-Before extracting features, the PPG signal must be cleaned to remove unwanted noise. This process involves:
-    • Removing High-Frequency Noise: Using a low-pass filter to eliminate sudden spikes and artifacts.
-    • Removing Slow Variations (Baseline Drift): Using a high-pass filter to focus on heartbeat-related changes.
-    • Smoothing the Signal: Applying signal processing techniques to improve peak detection.
-The cleaned signal is now ready for feature extraction.
-3. Peak Detection and RR Interval Calculation
-After filtering, we detect peaks in the PPG signal. These peaks represent heartbeats, and the time difference between two consecutive peaks is called the RR interval (measured in seconds).
-                                     RR Interval=Time between two successive peaks
+# Q-Q plot for t-distribution
+qqplot(qt(ppoints(N_sim), df = n-1), t_data, main = "Q-Q Plot for t-Distribution", col = "red", xlab = "Theoretical Quantiles", ylab = "Sample Quantiles")
+abline(0, 1, col = "blue", lwd = 2)
+Sample Input/Output
+    • Input: n=10, Nsim​=1000
+    • Output:
+        ◦ Histograms and density plots showing the heavier tails of the t-distribution compared to the normal distribution.
+        ◦ Q-Q plots indicating deviations from normality for the t-distribution.
 
-By analyzing RR intervals, we can calculate:
-    • Heart Rate (HR): The number of heartbeats per minute (BPM).  
-
-      Interval (s)HR= 60 / RR Interval (s)
-
-    • Heart Rate Variability (HRV): The variation in RR intervals, which provides insights into stress levels and cardiovascular health.
-4. Other Important Features in PPG Signals
-Apart from heart rate and RR intervals, we can extract additional features from the PPG signal:
-    • Pulse Amplitude: The height difference between peaks and valleys, indicating blood flow strength.
-    • Pulse Width: The time duration of each pulse, giving insights into arterial stiffness.
-    • Pulse Slope: The rate at which blood flow increases or decreases.
-These features are useful for diagnosing heart conditions and monitoring overall health.
-
-Source code:
-
-
-import neurokit2 as nk
-import numpy as np
-import matplotlib.pyplot as plt
-
-# 1. Generate a synthetic PPG signal (replace this with real PPG data)
-ppg_signal = nk.ppg_simulate(duration=30, sampling_rate=1000)
-
-# Plot the original PPG signal
-plt.figure(figsize=(10, 4))
-plt.plot(ppg_signal, label="Original PPG Signal")
-plt.title("Original PPG Signal")
-plt.xlabel("Time (ms)")
-plt.ylabel("Amplitude")
-plt.legend()
-plt.show()
-
-
-
-
-
-
-# 2. Filter the signal
-ppg_filtered = nk.ppg_clean(ppg_signal, sampling_rate=1000)
-
-# Plot the filtered PPG signal
-plt.figure(figsize=(10, 4))
-plt.plot(ppg_filtered, label="Filtered PPG Signal", color="orange")
-plt.title("Filtered PPG Signal")
-plt.xlabel("Time (ms)")
-plt.ylabel("Amplitude")
-plt.legend()
-plt.show()
-
-
-
-# 3. Detect Peaks
-peaks = nk.ppg_findpeaks(ppg_filtered, sampling_rate=1000)
-peak_indices = peaks["PPG_Peaks"]
-
-# Plot the filtered signal with detected peaks
-plt.figure(figsize=(10, 4))
-plt.plot(ppg_filtered, label="Filtered PPG Signal", color="orange")
-plt.scatter(peak_indices, ppg_filtered[peak_indices], color="red", label="Detected Peaks")
-plt.title("Filtered PPG Signal with Detected Peaks")
-plt.xlabel("Time (ms)")
-plt.ylabel("Amplitude")
-plt.legend()
-plt.show()
-
-
-
-
-
-# 4. Calculate RR Intervals
-rr_intervals = np.diff(peak_indices) / 1000 # Convert to seconds
-
-# Plot RR intervals
-plt.figure(figsize=(10, 4))
-plt.plot(rr_intervals, label="RR Intervals", color="green", marker="o")
-plt.title("RR Intervals (Seconds)")
-plt.xlabel("Peak Index")
-plt.ylabel("Interval (s)")
-plt.legend()
-plt.show()
-
-
-
-# 5. Calculate Heart Rate
-heart_rate = 60 / rr_intervals # BPM
-
-# Plot Heart Rate
-plt.figure(figsize=(10, 4))
-plt.plot(heart_rate, label="Heart Rate (BPM)", color="purple", marker="o")
-plt.title("Heart Rate (BPM)")
-plt.xlabel("Interval Index")
-plt.ylabel("Heart Rate (BPM)")
-plt.legend()
-plt.show()
-
-
-
-Feature extraction from a PPG signal is crucial for understanding heart health. By filtering the signal, detecting peaks, and analyzing RR intervals, we can calculate heart rate and other important cardiovascular metrics. These techniques make PPG-based monitoring an effective tool for wearable devices and medical applications.
-
-Lab Report on Discrete Fourier Transform (DFT)
-
+Lab 4: Simulation of F-Distributed Data and Its Relationship with χ²-Distributions
 Theory
-The Discrete Fourier Transform (DFT) is a mathematical technique used to transform a discrete-time signal from the time domain into the frequency domain. It is a fundamental tool in digital signal processing (DSP) and is widely used for analyzing the frequency content of signals, filtering, and spectral analysis.
-The DFT of a discrete-time signal x[n] of length N is defined as:
+    • F-Distribution: The F-distribution arises as the ratio of two chi-squared distributions. It is used in ANOVA and regression analysis.
+    • Relationship with χ²: If U1​ and U2​ are independent chi-squared random variables with df1​ and df2​ degrees of freedom, then F=U2​/df2​U1​/df1​​ follows an F-distribution.
+F-Distribution:
+      F=U2​/df2​U1​/df1​​
+      where U1​∼χ2(df1​) and U2​∼χ2(df2​).
 
-X[k]=n=0∑ N−1​x[n]e−jN2π​kn  for k=0,1,2,…,N−1
+Objective
+Simulate F-distributed data and study its relationship with chi-squared distributions.
+Pseudocode
+    1. Generate two independent chi-squared datasets.
+    2. Compute the F-distributed data as the ratio of the two chi-squared datasets.
+    3. Plot histograms, density plots, and Q-Q plots to visualize the F-distribution.
+Code
+R
+Copy
+# Parameters
+df1 <- 5
+df2 <- 10
+N_sim <- 1000
 
-where:
-    • X[k] is the DFT of the signal x[n], representing the frequency components.
-    • k is the frequency index.
-    • N is the total number of samples in the signal.
-The inverse DFT (IDFT) is used to reconstruct the original signal from its frequency components and is given by:
+# Generate F-distributed data
+set.seed(123)
+chi2_1 <- rchisq(N_sim, df = df1)
+chi2_2 <- rchisq(N_sim, df = df2)
+f_data <- (chi2_1 / df1) / (chi2_2 / df2)
 
-x[n]=N1​k=0∑N−1​X[k]ejN2π​knfor n=0,1,2,…,N−1
+# Graphical Output
+par(mfrow = c(2, 2))
 
-Key Points:
-    1. Frequency Resolution: The frequency resolution of the DFT depends on the number of samples N and the sampling rate fs​. The frequency resolution is given by Nfs​​.
-    2. Periodicity: The DFT assumes that the signal is periodic with period N. This means that the signal repeats itself every N samples.
-    3. Fast Fourier Transform (FFT): The FFT is an efficient algorithm to compute the DFT, reducing the computational complexity from O(N2) to O(NlogN).
+# Histogram
+hist(f_data, breaks = 30, col = "lightblue", probability = TRUE, main = "F-Distribution", xlab = "Value")
+curve(df(x, df1 = df1, df2 = df2), add = TRUE, col = "red", lwd = 2)
 
-Applications:
-    • Spectral Analysis: The DFT is used to analyze the frequency content of signals, such as audio, vibration, and biomedical signals.
-    • Filtering: By transforming a signal into the frequency domain, unwanted frequency components can be filtered out.
-    • Signal Compression: The DFT is used in compression algorithms like JPEG and MP3 to reduce the size of data by removing redundant frequency components.
-Steps to Perform DFT:
-    1. Sampling: Obtain a discrete-time signal x[n] by sampling a continuous-time signal at a rate fs​.
-    2. Windowing: Apply a window function (e.g., Hamming, Hanning) to reduce spectral leakage.
-    3. Compute DFT: Use the FFT algorithm to compute the DFT of the signal.
-    4. Analyze Spectrum: Plot the magnitude and phase of the DFT to analyze the frequency content of the signal.
+# Density plot
+plot(density(f_data), col = "blue", lwd = 2, main = "Density Plot", xlab = "Value")
+curve(df(x, df1 = df1, df2 = df2), add = TRUE, col = "red", lwd = 2)
 
-Source code
-# Implementing DFT in Python
-import numpy as np
-import matplotlib.pyplot as plt
+# Q-Q plot
+qqplot(qf(ppoints(N_sim), df1 = df1, df2 = df2), f_data, main = "Q-Q Plot for F-Distribution", col = "blue")
+abline(0, 1, col = "red", lwd = 2)
 
-def DFT(x):
-"""
-Compute the Discrete Fourier Transform (DFT) of a 1D signal.
-"""
-N = len(x)
-X = np.zeros(N, dtype=complex) # Output array (complex numbers)
-
-for k in range(N): # Loop over frequency bins
-for n in range(N): # Loop over time samples
-X[k] += x[n] * np.exp(-2j * np.pi * k * n / N)
-return X
-
-# Create a sample signal (two sine waves)
-Fs = 1000 # Sampling rate
-T = 1 / Fs # Sampling interval
-t = np.linspace(0, 1, Fs, endpoint=False) # 1 second duration
-
-# Signal: Combination of 50 Hz and 120 Hz sine waves
-f1, f2= 50, 120 #f3=150
-signal = np.sin(2 * np.pi * f1 * t) + 0.5 * np.sin(2 * np.pi * f2 * t) #+ 1.5 * np.sin(2 * np.pi * f3 * t)
-
-plt.plot(t,signal) # Single-sided spectrum
-plt.title("Time domain signal")
-plt.xlabel("time")
-plt.ylabel("amplitude")
-plt.grid()
-plt.show()
+# Boxplot
+boxplot(f_data, col = "lightgreen", main = "Boxplot of F-Distributed Data", ylab = "Value")
+Sample Input/Output
+    • Input: df1=5, df2=10, Nsim​=1000
+    • Output:
+        ◦ Histograms and density plots showing the F-distribution.
+        ◦ Q-Q plots indicating the fit of the F-distribution.
 
 
+Lab 8: Compare Biased and Unbiased Estimators
+Theory
+    • Biased Estimator: An estimator is biased if its expected value differs from the true parameter value.
+    • Unbiased Estimator: An estimator is unbiased if its expected value equals the true parameter value.
+    • Sample Variance: The sample variance S2=n−11​∑(Xi​−Xˉ)2 is unbiased, while n1​∑(Xi​−Xˉ)2 is biased.
+Unbiased Variance:
+      S2=n−11​i=1∑n​(Xi​−Xˉ)2
+    • Biased Variance:
+      σ^2=n1​i=1∑n​(Xi​−Xˉ)2
+
+Objective
+Compare biased and unbiased estimators of variance using simulated data.
+Pseudocode
+    1. Generate samples from a normal distribution.
+    2. Compute both biased and unbiased sample variances.
+    3. Compare the distributions of biased and unbiased variances.
+Code
+R
+Copy
+# Parameters
+mu <- 5
+sigma <- 2
+n <- 30
+N_sim <- 1000
+
+# Initialize vectors
+sample_vars <- numeric(N_sim)
+biased_vars <- numeric(N_sim)
+
+# Simulation
+set.seed(123)
+for (i in 1:N_sim) {
+    data <- rnorm(n, mean = mu, sd = sigma)
+    sample_vars[i] <- var(data)  # Unbiased
+    biased_vars[i] <- sum((data - mean(data))^2) / n  # Biased
+}
+
+# Graphical Output
+par(mfrow = c(1, 2))
+
+# Histogram of unbiased variances
+hist(sample_vars, breaks = 30, col = "lightblue", main = "Unbiased Sample Variance", xlab = "Variance")
+abline(v = sigma^2, col = "red", lwd = 2)
+
+# Histogram of biased variances
+hist(biased_vars, breaks = 30, col = "lightgreen", main = "Biased Sample Variance", xlab = "Variance")
+abline(v = sigma^2, col = "red", lwd = 2)
+Sample Input/Output
+    • Input: μ=5, σ=2, n=30, Nsim​=1000
+    • Output:
+        ◦ Histograms showing the distributions of biased and unbiased variances.
+        ◦ The unbiased variance centers around σ2=4, while the biased variance is lower.
 
 
+Lab 10: Derive MLEs for Binomial, Poisson, and Normal Distributions
+Theory
+    • Maximum Likelihood Estimation (MLE): A method to estimate the parameters of a statistical model by maximizing the likelihood function.
+    • Binomial MLE: The MLE for p in a binomial distribution is p^​=number of trialsnumber of successes​.
+    • Poisson MLE: The MLE for λ in a Poisson distribution is λ^=Xˉ.
+    • Normal MLE: The MLE for μ is Xˉ, and for σ2 is n1​∑(Xi​−Xˉ)2.
+Binomial MLE:
+      p^​=number of trialsnumber of successes​
+    • Poisson MLE:
+      λ^=Xˉ
+    • Normal MLE:
+      μ^​=Xˉ,σ^2=n1​i=1∑n​(Xi​−Xˉ)2
+
+Objective
+Derive MLEs for the parameters of binomial, Poisson, and normal distributions using simulated data.
+Pseudocode
+    1. Generate data from binomial, Poisson, and normal distributions.
+    2. Compute the MLEs for each distribution.
+    3. Compare the MLEs to the true parameter values.
+Code
+R
+Copy
+# Binomial MLE
+n_binom <- 20
+p_true <- 0.6
+data_binom <- rbinom(100, size = n_binom, prob = p_true)
+p_mle <- mean(data_binom) / n_binom
+
+# Poisson MLE
+lambda_true <- 3
+data_pois <- rpois(100, lambda = lambda_true)
+lambda_mle <- mean(data_pois)
+
+# Normal MLE
+mu_true <- 5
+sigma_true <- 2
+data_norm <- rnorm(100, mean = mu_true, sd = sigma_true)
+mu_mle <- mean(data_norm)
+sigma_mle <- sqrt(mean((data_norm - mu_mle)^2))
+
+# Output
+print(paste("Binomial MLE for p:", p_mle))
+print(paste("Poisson MLE for lambda:", lambda_mle))
+print(paste("Normal MLE for mu:", mu_mle))
+print(paste("Normal MLE for sigma:", sigma_mle))
+Sample Input/Output
+    • Input: Binomial (n=20, p=0.6), Poisson (λ=3), Normal (μ=5, σ=2)
+    • Output:
+        ◦ Binomial MLE for p: Close to 0.6.
+        ◦ Poisson MLE for λ: Close to 3.
+        ◦ Normal MLE for μ: Close to 5.
+        ◦ Normal MLE for σ: Close to 2.
+
+Lab 12: Derive the Best Critical Region for Simple vs. Composite Hypotheses
+Theory
+    • Critical Region: The set of values for which the null hypothesis is rejected.
+    • Simple Hypothesis: A hypothesis that specifies the exact value of the parameter.
+    • Composite Hypothesis: A hypothesis that specifies a range of values for the parameter.
+Likelihood Ratio:
+      Λ=L(θ1​)L(θ0​)​
+    • Critical Region: Reject H0​ if Λ<k, where k is chosen based on α.
+
+Objective
+Derive the best critical region for testing simple vs. composite hypotheses.
+Pseudocode
+    1. Generate data under the null and alternative hypotheses.
+    2. Compute the likelihood ratio for each dataset.
+    3. Determine the critical region based on the likelihood ratio.
+Code
+R
+Copy
+# Parameters
+mu0 <- 5  # Null hypothesis mean
+mu1 <- 6  # Alternative hypothesis mean
+sigma <- 2  # Population standard deviation
+n <- 30  # Sample size
+alpha <- 0.05  # Significance level
+
+# Generate sample data under H0
+set.seed(123)
+sample_data_H0 <- rnorm(n, mean = mu0, sd = sigma)
+
+# Generate sample data under H1
+sample_data_H1 <- rnorm(n, mean = mu1, sd = sigma)
+
+# Likelihood ratio test
+likelihood_ratio <- function(data, mu0, mu1, sigma) {
+    exp(sum(dnorm(data, mean = mu1, sd = sigma, log = TRUE)) -
+    sum(dnorm(data, mean = mu0, sd = sigma, log = TRUE))
+}
+
+# Critical region
+critical_value <- qnorm(1 - alpha, mean = mu0, sd = sigma / sqrt(n))
+
+# Decision
+decision_H0 <- mean(sample_data_H0) > critical_value
+decision_H1 <- mean(sample_data_H1) > critical_value
+
+# Output
+print(paste("Critical Value:", critical_value))
+print(paste("Decision under H0:", decision_H0))
+print(paste("Decision under H1:", decision_H1))
+Sample Input/Output
+    • Input: μ0​=5, μ1​=6, σ=2, n=30, α=0.05
+    • Output:
+        ◦ Critical Value: The threshold for rejecting the null hypothesis.
+        ◦ Decision under H0: Whether the null hypothesis is rejected.
+        ◦ Decision under H1: Whether the alternative hypothesis is accepted.
 
 
+Lab 14: Perform Hypothesis Testing Step-by-Step Using Real or Simulated Data
+Theory
+    • Hypothesis Testing Steps:
+        1. State the null and alternative hypotheses.
+        2. Choose a significance level (α).
+        3. Calculate the test statistic.
+        4. Determine the critical value or p-value.
+        5. Make a decision (reject or fail to reject the null hypothesis).
+Test Statistic:
+      t=S/n​Xˉ−μ0​​
+    • Critical Value:
+      tα,n−1​
 
 
+Objective
+Perform hypothesis testing step-by-step using simulated data.
+Pseudocode
+    1. Generate sample data from a normal distribution.
+    2. State the null and alternative hypotheses.
+    3. Calculate the test statistic and p-value.
+    4. Make a decision based on the p-value.
+Code
+R
+Copy
+# Parameters
+mu0 <- 5  # Null hypothesis mean
+mu1 <- 6  # True population mean
+sigma <- 2  # Population standard deviation
+n <- 30  # Sample size
+alpha <- 0.05  # Significance level
+
+# Generate sample data
+set.seed(123)
+sample_data <- rnorm(n, mean = mu1, sd = sigma)
+
+# Step 1: State hypotheses
+print("H0: mu = 5")
+print("H1: mu > 5")
+
+# Step 2: Choose significance level
+print(paste("Significance level (alpha):", alpha))
+
+# Step 3: Calculate test statistic
+t_stat <- (mean(sample_data) - mu0) / (sd(sample_data) / sqrt(n))
+print(paste("Test Statistic (t):", t_stat))
+
+# Step 4: Determine critical value or p-value
+critical_value <- qt(1 - alpha, df = n-1)
+p_value <- pt(t_stat, df = n-1, lower.tail = FALSE)
+print(paste("Critical Value:", critical_value))
+print(paste("P-value:", p_value))
+
+# Step 5: Make a decision
+if (t_stat > critical_value) {
+    decision <- "Reject H0"
+} else {
+    decision <- "Fail to reject H0"
+}
+print(paste("Decision:", decision))
+Sample Input/Output
+    • Input: μ0​=5, μ1​=6, σ=2, n=30, α=0.05
+    • Output:
+        ◦ Test Statistic: The calculated t-statistic.
+        ◦ P-value: The probability of observing the test statistic under the null hypothesis.
+        ◦ Decision: Whether to reject or fail to reject the null hypothesis.
+
+Lab 15: Compare the Power of Different Tests for the Same Hypothesis
+Theory
+    • Power of a Test: The probability of correctly rejecting the null hypothesis when the alternative hypothesis is true.
+    • t-Test vs. z-Test: The t-test is used for small samples, while the z-test is used for large samples.
+Power of t-Test:
+      Power=P(Reject H0​∣H1​ is true)
+    • Power of z-Test:
+      Power=P(Reject H0​∣H1​ is true)
+
+Objective
+Compare the power of the t-test and z-test for the same hypothesis.
+Pseudocode
+    1. Generate data under the alternative hypothesis.
+    2. Perform both t-tests and z-tests.
+    3. Calculate the power of each test.
+Code
+R
+Copy
+# Parameters
+mu0 <- 5  # Null hypothesis mean
+mu1 <- 6  # Alternative hypothesis mean
+sigma <- 2  # Population standard deviation
+n <- 30  # Sample size
+alpha <- 0.05  # Significance level
+N_sim <- 1000  # Number of simulations
+
+# Initialize power counters
+power_t_test <- 0
+power_z_test <- 0
+
+# Simulation
+set.seed(123)
+for (i in 1:N_sim) {
+    # Simulate data under H1
+    data <- rnorm(n, mean = mu1, sd = sigma)
+
+    # Perform t-test
+    t_test <- t.test(data, mu = mu0, alternative = "greater")
+    if (t_test$p.value < alpha) {
+        power_t_test <- power_t_test + 1
+    }
+
+    # Perform z-test
+    z_stat <- (mean(data) - mu0) / (sigma / sqrt(n))
+    z_critical <- qnorm(1 - alpha)
+    if (z_stat > z_critical) {
+        power_z_test <- power_z_test + 1
+    }
+}
+
+# Output
+print(paste("Power of t-test:", power_t_test / N_sim))
+print(paste("Power of z-test:", power_z_test / N_sim))
+Sample Input/Output
+    • Input: μ0​=5, μ1​=6, σ=2, n=30, α=0.05, Nsim​=1000
+    • Output:
+        ◦ Power of t-test: The probability of correctly rejecting the null hypothesis using the t-test.
+        ◦ Power of z-test: The probability of correctly rejecting the null hypothesis using the z-test.
+
+Lab 16: Apply Bartlett’s Test to Compare Variances Across Multiple Groups
+Theory
+    • Bartlett’s Test: A statistical test used to compare the variances of multiple groups. It assumes that the data is normally distributed.
+    • Null Hypothesis: All groups have equal variances.
+Bartlett’s Test Statistic:
+T=1+3(k−1)1​(∑i=1k​ni​−11​−N−k1​)(N−k)ln(Sp2​)−∑i=1k​(ni​−1)ln(Si2​)​
+where Sp2​ is the pooled variance.
 
 
+Objective
+Apply Bartlett’s test to compare the variances of multiple groups.
+Pseudocode
+    1. Generate data for multiple groups with different variances.
+    2. Perform Bartlett’s test to compare the variances.
+    3. Interpret the results.
+Code
+R
+Copy
+# Generate sample data for three groups
+set.seed(123)
+group1 <- rnorm(30, mean = 5, sd = 2)
+group2 <- rnorm(30, mean = 5, sd = 3)
+group3 <- rnorm(30, mean = 5, sd = 4)
+
+# Combine data into a list
+data_list <- list(group1, group2, group3)
+
+# Perform Bartlett’s test
+bartlett_test_result <- bartlett.test(data_list)
+
+# Output
+print(bartlett_test_result)
+Sample Input/Output
+    • Input: Three groups with different variances.
+    • Output:
+        ◦ Bartlett’s test result: Whether to reject the null hypothesis of equal variances.
+
+Lab 17: Perform Fisher’s Exact Test on 2×2 Contingency Tables
+Theory
+    • Fisher’s Exact Test: A statistical test used to determine if there are nonrandom associations between two categorical variables in a 2×2 contingency table.
+    • Null Hypothesis: The two variables are independent.
+Fisher’s Exact Test:
+p=(a+cn​)(aa+b​)(cc+d​)​
+where a,b,c,d are the cell counts in a 2×2 table.
 
 
+Objective
+Perform Fisher’s exact test on a 2×2 contingency table.
+Pseudocode
+    1. Create a 2×2 contingency table.
+    2. Perform Fisher’s exact test.
+    3. Interpret the results.
+Code
+R
+Copy
+# Create a 2x2 contingency table
+data <- matrix(c(10, 5, 2, 8), nrow = 2, byrow = TRUE)
+rownames(data) <- c("Group A", "Group B")
+colnames(data) <- c("Success", "Failure")
 
+# Perform Fisher’s exact test
+fisher_test_result <- fisher.test(data)
 
+# Output
+print(data)
+print(fisher_test_result)
+Sample Input/Output
+    • Input: A 2×2 contingency table.
+    • Output:
+        ◦ Fisher’s exact test result: Whether to reject the null hypothesis of independence.
 
+Lab 19: Conduct Non-Parametric Tests
+Theory
+    • Non-Parametric Tests: Statistical tests that do not assume a specific distribution for the data.
+    • Wilcoxon Rank-Sum Test: A non-parametric test to compare two independent samples.
+Wilcoxon Rank-Sum Test:
+      W=i=1∑n1​​Ri​
+      where Ri​ are the ranks of the first sample.
 
+Objective
+Conduct a non-parametric test (Wilcoxon rank-sum test) to compare two groups.
+Pseudocode
+    1. Generate data for two groups.
+    2. Perform the Wilcoxon rank-sum test.
+    3. Interpret the results.
+Code
+R
+Copy
+# Generate sample data
+set.seed(123)
+group1 <- rnorm(20, mean = 5, sd = 2)
+group2 <- rnorm(20, mean = 7, sd = 2)
 
-# Compute DFT
-dft_output = DFT(signal)
+# Perform Wilcoxon rank-sum test
+wilcox_test_result <- wilcox.test(group1, group2)
 
-# Compute frequency bins
-freqs = np.fft.fftfreq(len(dft_output), T)
-
-# Plot magnitude spectrum (single-sided)
-plt.figure(figsize=(10, 5))
-plt.plot(freqs[:Fs//2], np.abs(dft_output[:Fs//2])) # Single-sided spectrum
-plt.title("DFT Frequency Spectrum")
-plt.xlabel("Frequency (Hz)")
-plt.ylabel("Magnitude")
-plt.grid()
-plt.show()
-
-
-
-
-# Compute Frequency Bins Using NumPy
-# Instead of computing manually, NumPy provides a built-in function np.fft.fftfreq(), which calculates the bins directly.
-# python
-# CopyEdit
-import numpy as np
-
-N = 1024 # Number of points in DFT
-Fs = 1000 # Sampling frequency
-
-# Compute frequency bins using NumPy
-freq_bins = np.fft.fftfreq(N, d=1/Fs)
-
-print(freq_bins[:10]) # Print first 10 frequency bins
-
-[0. 0.9765625 1.953125 2.9296875 3.90625 4.8828125 5.859375 6.8359375 7.8125 8.7890625]
-
-# Example: Removing Noise from an Audio Signal
-# We'll generate a noisy audio signal, apply FFT, filter out high-frequency noise, and reconstruct the cleaned signal using Inverse FFT.
-# Steps:
-# 1. Generate an audio signal (a pure sine wave of 440 Hz).
-# 2. Add random noise.
-# 3. Apply FFT to transform the signal to the frequency domain.
-# 4. Remove noise by filtering high frequencies.
-# 5. Apply Inverse FFT to get back the cleaned signal.
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.fft import fft, ifft, fftfreq
-
-# Generate a sample audio signal
-Fs = 1000 # Sampling rate (1000 Hz)
-T = 1 / Fs # Sampling interval
-t = np.linspace(0, 1, Fs, endpoint=False) # 1 second time vector
-
-# Generate a pure sine wave (440 Hz, like an "A4" musical note)
-freq_signal = 440
-pure_signal = np.sin(2 * np.pi * freq_signal * t)
-
-# Add random noise
-noise = np.random.normal(0, 0.5, pure_signal.shape)
-noisy_signal = pure_signal + noise
-
-# Apply FFT
-fft_signal = fft(noisy_signal)
-freqs = fftfreq(len(fft_signal), T) # Frequency bins
-
-# Filter: Remove frequencies higher than 500 Hz
-fft_filtered = fft_signal.copy()
-fft_filtered[np.abs(freqs) > 500] = 0 # Zero out high frequencies (noise)
-
-# Apply Inverse FFT to get the cleaned signal
-cleaned_signal = ifft(fft_filtered).real
-
-# Plot the results
-plt.figure(figsize=(12, 6))
-
-plt.subplot(3, 1, 1)
-plt.plot(t, pure_signal, label="Original Signal (440 Hz)")
-plt.legend()
-plt.title("Original Pure Signal")
-
-plt.subplot(3, 1, 2)
-plt.plot(t, noisy_signal, label="Noisy Signal", color="red")
-plt.legend()
-plt.title("Noisy Signal")
-
-plt.subplot(3, 1, 3)
-plt.plot(t, cleaned_signal, label="Cleaned Signal (After FFT Filtering)", color="yellow")
-plt.legend()
-plt.title("Filtered Signal (Noise Removed)")
-
-plt.tight_layout()
-plt.show()
-
-
-
-
-
+# Output
+print(wilcox_test_result)
+Sample Input/Output
+    • Input: Two groups with different means.
+    • Output:
+        ◦ Wilcoxon rank-sum test result: Whether to reject the null hypothesis of equal medians.
